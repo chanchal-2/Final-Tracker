@@ -11,14 +11,18 @@ import {
   User,
   LogOut,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  Activity,
+  CheckSquare,
+  Video,
+  PieChart
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
 export default function Sidebar({ activeTab, setActiveTab, isCollapsed, setIsCollapsed }) {
-  const { logout } = useAuth();
+  const { user, logout } = useAuth();
 
-  const navItems = [
+  const studentNavItems = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { id: 'my-projects', label: 'My Projects', icon: FolderGit2 },
     { id: 'upload-project', label: 'Upload Project', icon: UploadCloud },
@@ -29,6 +33,21 @@ export default function Sidebar({ activeTab, setActiveTab, isCollapsed, setIsCol
     { id: 'feedback', label: 'Feedback', icon: MessageSquare },
     { id: 'profile', label: 'Profile', icon: User },
   ];
+
+  const guideNavItems = [
+    { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
+    { id: 'assigned-projects', label: 'Assigned Projects', icon: FolderGit2 },
+    { id: 'student-progress', label: 'Student Progress', icon: Activity },
+    { id: 'milestones', label: 'Milestones', icon: Milestone },
+    { id: 'reviews', label: 'Reviews & Feedback', icon: CheckSquare },
+    { id: 'documents', label: 'Documents', icon: FileText },
+    { id: 'meetings', label: 'Meetings', icon: Video },
+    { id: 'notifications', label: 'Notifications', icon: Bell },
+    { id: 'reports', label: 'Reports', icon: PieChart },
+    { id: 'profile', label: 'Profile', icon: User },
+  ];
+
+  const navItems = user?.role === 'guide' ? guideNavItems : studentNavItems;
 
   return (
     <aside 

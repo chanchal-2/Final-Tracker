@@ -8,14 +8,19 @@ export default function Topbar({ isCollapsed, setIsCollapsed, activeTab }) {
   // Simple title mapper
   const getTitle = () => {
     const titles = {
-      'dashboard': 'Student Dashboard',
+      'dashboard': user?.role === 'guide' ? 'Guide Dashboard' : 'Student Dashboard',
       'my-projects': 'My Projects',
+      'assigned-projects': 'Assigned Projects',
       'upload-project': 'Upload Project',
       'progress-updates': 'Progress Updates',
+      'student-progress': 'Student Progress',
       'documents': 'Documents',
       'milestones': 'Milestones',
       'notifications': 'Notifications',
       'feedback': 'Guide Feedback',
+      'reviews': 'Reviews & Feedback',
+      'meetings': 'Meetings',
+      'reports': 'Reports',
       'profile': 'My Profile'
     };
     return titles[activeTab] || 'Dashboard';
@@ -65,10 +70,12 @@ export default function Topbar({ isCollapsed, setIsCollapsed, activeTab }) {
         <div className="flex items-center gap-3">
           <div className="text-right hidden sm:block">
             <span className="block text-xs font-bold text-slate-800">{user?.name}</span>
-            <span className="block text-[10px] font-bold text-slate-400">Student</span>
+            <span className="block text-[10px] font-bold text-slate-400">
+              {user?.role === 'guide' ? 'Guide / Faculty' : 'Student'}
+            </span>
           </div>
           <div className="w-9 h-9 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-sm border-2 border-white shadow-sm">
-            {user?.name?.charAt(0).toUpperCase()}
+            {user?.role === 'guide' ? 'GD' : user?.name?.charAt(0).toUpperCase()}
           </div>
         </div>
       </div>

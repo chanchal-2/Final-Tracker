@@ -130,11 +130,11 @@ router.post('/', protect, authorize('hod'), async (req, res) => {
   }
 });
 
-// @desc    Update project details (progress, status, milestones)
+// @desc    Update project details (progress, status, milestones, feedback)
 // @route   PUT /api/projects/:id
 // @access  Private (HOD, Guide)
 router.put('/:id', protect, authorize('hod', 'guide'), async (req, res) => {
-  const { status, progress, milestones } = req.body;
+  const { status, progress, milestones, feedback } = req.body;
 
   try {
     if (mongoose.connection.readyState === 1) {
@@ -146,6 +146,7 @@ router.put('/:id', protect, authorize('hod', 'guide'), async (req, res) => {
       if (status) project.status = status;
       if (progress !== undefined) project.progress = progress;
       if (milestones) project.milestones = milestones;
+      if (feedback) project.feedback = feedback;
 
       const updatedProject = await project.save();
       return res.json(updatedProject);
@@ -159,6 +160,7 @@ router.put('/:id', protect, authorize('hod', 'guide'), async (req, res) => {
       if (status) project.status = status;
       if (progress !== undefined) project.progress = progress;
       if (milestones) project.milestones = milestones;
+      if (feedback) project.feedback = feedback;
 
       return res.json(project);
     }
