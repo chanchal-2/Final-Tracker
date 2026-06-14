@@ -28,18 +28,9 @@ export default function ReviewsFeedbackView({ projects, setProjects, token, user
     setLoading(true);
     setMsg('');
 
-    // Prepare updated feedback array
-    const updatedFeedback = [...(selectedProj.feedback || [])];
-    if (feedbackComment.trim()) {
-      updatedFeedback.push({
-        guideName: user.name,
-        comment: feedbackComment.trim(),
-        date: new Date()
-      });
-    }
-
     try {
-      const res = await fetch(`/api/projects/${selectedProj._id}`, {
+      // 1. Update Project Status/Progress
+      const resPut = await fetch(`/api/projects/${selectedProj._id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -47,20 +38,38 @@ export default function ReviewsFeedbackView({ projects, setProjects, token, user
         },
         body: JSON.stringify({
           status,
-          progress: Number(progress),
-          feedback: updatedFeedback
+          progress: Number(progress)
         })
       });
 
-      if (res.ok) {
-        const updatedProj = await res.json();
-        setProjects(projects.map(p => p._id === updatedProj._id ? updatedProj : p));
-        setMsg('Review submitted successfully!');
-        setFeedbackComment(''); // Clear input
-        setTimeout(() => setMsg(''), 3000);
-      } else {
-        setMsg('Failed to save review');
+      if (!resPut.ok) {
+        setMsg('Failed to update project details.');
+        return;
       }
+
+      // 2. Submit Feedback if present (triggers notification)
+      let updatedProj = await resPut.json();
+      if (feedbackComment.trim()) {
+        const resFb = await fetch(`/api/projects/${selectedProj._id}/feedback`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`
+          },
+          body: JSON.stringify({ comment: feedbackComment.trim() })
+        });
+
+        if (resFb.ok) {
+          const newFb = await resFb.json();
+          updatedProj.feedback = [...(updatedProj.feedback || []), newFb];
+        }
+      }
+
+      setProjects(projects.map(p => p._id === updatedProj._id ? updatedProj : p));
+      setMsg('Review submitted successfully!');
+      setFeedbackComment(''); // Clear input
+      setTimeout(() => setMsg(''), 3000);
+
     } catch (err) {
       console.error(err);
       setMsg('Error saving details.');

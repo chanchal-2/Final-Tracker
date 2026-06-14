@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Megaphone, Send, Clock, Users, Eye, CheckCircle2 } from 'lucide-react';
 
-export default function AnnouncementsView() {
+export default function AnnouncementsView({ token }) {
   const [title, setTitle] = useState('');
   const [message, setMessage] = useState('');
   const [recipient, setRecipient] = useState('all-students');
@@ -9,6 +9,7 @@ export default function AnnouncementsView() {
   const [scheduleDate, setScheduleDate] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
 
   // Mock past announcements
   const pastAnnouncements = [
@@ -17,19 +18,37 @@ export default function AnnouncementsView() {
     { id: 3, title: 'Plagiarism Policy Update', date: 'June 18, 2026', recipients: 'All Students', readPct: 0, status: 'Scheduled' }
   ];
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!title.trim() || !message.trim()) return;
 
     setIsSubmitting(true);
-    // Simulate API call
-    setTimeout(() => {
+    setErrorMsg('');
+    try {
+      const res = await fetch('/api/announcements', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({ title, message, recipient })
+      });
+
+      if (res.ok) {
+        setSuccess(true);
+        setTitle('');
+        setMessage('');
+        setTimeout(() => setSuccess(false), 3000);
+      } else {
+        const errorData = await res.json();
+        setErrorMsg(`Server Error: ${errorData.message}`);
+      }
+    } catch (err) {
+      console.error(err);
+      setErrorMsg(`Network Error: ${err.message}`);
+    } finally {
       setIsSubmitting(false);
-      setSuccess(true);
-      setTitle('');
-      setMessage('');
-      setTimeout(() => setSuccess(false), 3000);
-    }, 1000);
+    }
   };
 
   return (
@@ -62,6 +81,12 @@ export default function AnnouncementsView() {
               <div className="mb-6 p-4 rounded-xl bg-emerald-50 border border-emerald-200 flex items-center gap-3 animate-in slide-in-from-top-2">
                 <CheckCircle2 className="w-5 h-5 text-emerald-500" />
                 <p className="text-sm font-bold text-emerald-700">Announcement successfully published!</p>
+              </div>
+            )}
+            
+            {errorMsg && (
+              <div className="mb-6 p-4 rounded-xl bg-rose-50 border border-rose-200 flex items-center gap-3 animate-in slide-in-from-top-2">
+                <p className="text-sm font-bold text-rose-700">{errorMsg}</p>
               </div>
             )}
 

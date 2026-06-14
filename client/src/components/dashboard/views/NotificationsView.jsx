@@ -1,27 +1,37 @@
-import React, { useEffect } from 'react';
-import { Bell, Info, CheckCircle, AlertTriangle, XCircle } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Bell, Info, CheckCircle, AlertTriangle, XCircle, Clock, Check } from 'lucide-react';
 
-export default function NotificationsView({ project, setProject, token }) {
-  const notifications = project.notifications || [];
+export default function NotificationsView({ token }) {
+  const [notifications, setNotifications] = useState([]);
 
   useEffect(() => {
-    // Mark notifications as read when the view is opened
-    const unreadExists = notifications.some(n => !n.isRead);
-    
-    if (unreadExists && project._id) {
-      fetch(`/api/projects/${project._id}/notifications/read`, {
+    const fetchNotifications = async () => {
+      try {
+        const res = await fetch('/api/notifications', {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        if (res.ok) {
+          const data = await res.json();
+          setNotifications(data);
+        }
+      } catch (err) {
+        console.error('Failed to fetch notifications', err);
+      }
+    };
+    fetchNotifications();
+  }, [token]);
+
+  const markAsRead = async (id) => {
+    try {
+      await fetch(`/api/notifications/${id}/read`, {
         method: 'PUT',
         headers: { Authorization: `Bearer ${token}` }
-      })
-      .then(res => res.json())
-      .then(() => {
-        // Update local state to mark all as read
-        const updatedNotifications = notifications.map(n => ({ ...n, isRead: true }));
-        setProject({ ...project, notifications: updatedNotifications });
-      })
-      .catch(err => console.error('Failed to mark notifications as read', err));
+      });
+      setNotifications(prev => prev.map(n => n._id === id ? { ...n, isRead: true } : n));
+    } catch (err) {
+      console.error(err);
     }
-  }, [project._id, notifications, setProject, token]);
+  };
 
   const getIcon = (type) => {
     switch(type) {
@@ -64,7 +74,7 @@ export default function NotificationsView({ project, setProject, token }) {
       ) : (
         <div className="space-y-4">
           {/* Sort notifications by date descending */}
-          {[...notifications].sort((a, b) => new Date(b.date) - new Date(a.date)).map((n, idx) => (
+          {[...notifications].sort((a, b) => new Date(b.createdAt || b.date) - new Date(a.createdAt || a.date)).map((n, idx) => (
             <div key={idx} className={`flex items-start gap-4 p-5 rounded-2xl border transition-all ${
               !n.isRead ? 'bg-white border-indigo-100 shadow-sm' : 'bg-slate-50 border-slate-100'
             }`}>
@@ -77,17 +87,21 @@ export default function NotificationsView({ project, setProject, token }) {
                 <div className="flex items-center justify-between gap-2 mb-1">
                   <h3 className="text-sm font-bold text-[#0B1220] tracking-tight">{n.title}</h3>
                   <span className="text-[10px] font-bold text-slate-400">
-                    {new Date(n.date).toLocaleString([], { dateStyle: 'short', timeStyle: 'short' })}
+                    {new Date(n.createdAt || n.date || new Date()).toLocaleString([], { dateStyle: 'short', timeStyle: 'short' })}
                   </span>
                 </div>
                 <p className="text-xs text-slate-600 font-medium leading-relaxed">
                   {n.message}
                 </p>
+                {!n.isRead && (
+                  <button 
+                    onClick={() => markAsRead(n._id)}
+                    className="mt-3 text-[10px] font-bold text-indigo-600 hover:text-indigo-800 flex items-center gap-1 uppercase tracking-wider"
+                  >
+                    <Check className="w-3 h-3" /> Mark as Read
+                  </button>
+                )}
               </div>
-
-              {!n.isRead && (
-                <div className="w-2 h-2 rounded-full bg-indigo-500 shrink-0 mt-2"></div>
-              )}
             </div>
           ))}
         </div>

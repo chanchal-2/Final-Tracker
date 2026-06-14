@@ -1,43 +1,42 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Bell, CheckCircle, AlertTriangle, Info, Clock, Check } from 'lucide-react';
 
 export default function NotificationsView({ projects, token }) {
-  // Extract all notifications across all projects
-  const [allNotifications, setAllNotifications] = useState(() => {
-    let notifs = [];
-    projects.forEach(p => {
-      if (p.notifications) {
-        p.notifications.forEach(n => {
-          notifs.push({
-            ...n,
-            projectInfo: {
-              _id: p._id,
-              projectId: p.projectId,
-              title: p.title
-            }
-          });
-        });
-      }
-    });
-    // Sort newest first
-    notifs.sort((a, b) => new Date(b.date) - new Date(a.date));
-    return notifs;
-  });
+  const [allNotifications, setAllNotifications] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const markAsRead = async (projectId) => {
+  useEffect(() => {
+    const fetchNotifications = async () => {
+      try {
+        const res = await fetch('/api/notifications', {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        if (res.ok) {
+          const data = await res.json();
+          setAllNotifications(data);
+        }
+      } catch (err) {
+        console.error('Failed to fetch notifications', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchNotifications();
+  }, [token]);
+
+  const markAsRead = async (id) => {
     try {
-      const res = await fetch(`/api/projects/${projectId}/notifications/read`, {
+      const res = await fetch(`/api/notifications/${id}/read`, {
         method: 'PUT',
         headers: { Authorization: `Bearer ${token}` }
       });
       if (res.ok) {
-        // Update local state
         setAllNotifications(prev => prev.map(n => 
-          n.projectInfo._id === projectId ? { ...n, isRead: true } : n
+          n._id === id ? { ...n, isRead: true } : n
         ));
       }
     } catch (err) {
-      console.error('Failed to mark notifications as read', err);
+      console.error('Failed to mark notification as read', err);
     }
   };
 
@@ -101,7 +100,7 @@ export default function NotificationsView({ projects, token }) {
                     </h4>
                     <span className="text-[10px] font-bold text-slate-400 flex items-center gap-1 uppercase tracking-wider">
                       <Clock className="w-3 h-3" />
-                      {new Date(notif.date).toLocaleString()}
+                      {new Date(notif.createdAt || notif.date || new Date()).toLocaleString()}
                     </span>
                   </div>
                   
@@ -112,16 +111,13 @@ export default function NotificationsView({ projects, token }) {
                   <div className="flex items-center justify-between mt-3 pt-3 border-t border-slate-100">
                     <div className="flex items-center gap-2">
                       <span className="text-[9px] font-black uppercase tracking-wider text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded border border-indigo-100">
-                        {notif.projectInfo.projectId}
-                      </span>
-                      <span className="text-[10px] font-bold text-slate-500 line-clamp-1">
-                        {notif.projectInfo.title}
+                        {notif.projectId ? 'PROJECT UPDATE' : 'GLOBAL ALERT'}
                       </span>
                     </div>
                     
                     {!notif.isRead && (
                       <button 
-                        onClick={() => markAsRead(notif.projectInfo._id)}
+                        onClick={() => markAsRead(notif._id)}
                         className="text-[10px] font-bold text-indigo-600 hover:text-indigo-800 flex items-center gap-1 uppercase tracking-wider"
                       >
                         <Check className="w-3 h-3" /> Mark as Read

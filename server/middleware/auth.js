@@ -13,6 +13,20 @@ export const protect = async (req, res, next) => {
     try {
       token = req.headers.authorization.split(' ')[1];
 
+      // --- BYPASS MONGODB FOR UI TESTING ---
+      if (token.startsWith('mock-token-')) {
+        const role = token.split('-')[2]; // e.g. 'mock-token-hod' -> 'hod'
+        req.user = {
+          _id: `mock-${role}-123`,
+          name: `Mock ${role.toUpperCase()}`,
+          email: `${role}@projecttracker.edu`,
+          role: role,
+          department: 'Computer Science'
+        };
+        return next();
+      }
+      // -------------------------------------
+
       // Decode token
       const decoded = jwt.verify(token, process.env.JWT_SECRET || 'supersecretkey');
 

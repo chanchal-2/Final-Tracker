@@ -2,6 +2,7 @@ import express from 'express';
 import mongoose from 'mongoose';
 import Project from '../models/Project.js';
 import User from '../models/User.js';
+import Notification from '../models/Notification.js';
 import { protect, authorize } from '../middleware/auth.js';
 import dbStore from '../config/dbStore.js';
 import multer from 'multer';
@@ -236,12 +237,14 @@ router.post('/:id/documents', protect, upload.single('file'), async (req, res) =
 
       project.documents.push({ title, type, url });
       
-      // Send notification
-      project.notifications.push({
+      // Global Notification to HOD and Guide
+      await Notification.create({
         title: 'New Document Uploaded',
-        message: `A new ${type} titled "${title}" has been uploaded.`,
+        message: `Student uploaded a new ${type} titled "${title}" for project ${project.projectId}.`,
         type: 'info',
-        date: new Date()
+        targetRoles: ['hod'], // all hods
+        targetUsers: project.guideId ? [project.guideId] : [], // specific guide
+        projectId: project._id
       });
 
       const updatedProject = await project.save();
@@ -254,13 +257,17 @@ router.post('/:id/documents', protect, upload.single('file'), async (req, res) =
       const newDoc = { title, type, url, uploadDate: new Date(), _id: 'doc_' + Math.random().toString(36).substr(2, 9) };
       project.documents.push(newDoc);
 
-      if (!project.notifications) project.notifications = [];
-      project.notifications.push({
+      if (!dbStore.notifications) dbStore.notifications = [];
+      dbStore.notifications.push({
+        _id: 'notif_' + Math.random().toString(36).substr(2, 9),
         title: 'New Document Uploaded',
-        message: `A new ${type} titled "${title}" has been uploaded.`,
+        message: `Student uploaded a new ${type} titled "${title}" for project ${project.projectId}.`,
         type: 'info',
-        date: new Date(),
-        isRead: false
+        targetRoles: ['hod'],
+        targetUsers: project.guideId ? [project.guideId.toString()] : [],
+        projectId: project._id,
+        readBy: [],
+        createdAt: new Date()
       });
 
       return res.status(201).json(newDoc);
@@ -290,6 +297,69 @@ router.put('/:id/notifications/read', protect, async (req, res) => {
         project.notifications.forEach(n => n.isRead = true);
       }
       return res.json({ message: 'Notifications marked as read' });
+    }
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// @desc    Post feedback for a project
+// @route   POST /api/projects/:id/feedback
+// @access  Private (Guide, HOD)
+router.post('/:id/feedback', protect, authorize('guide', 'hod'), async (req, res) => {
+  const { comment } = req.body;
+  if (!comment) return res.status(400).json({ message: 'Comment is required' });
+
+  try {
+    if (mongoose.connection.readyState === 1) {
+      const project = await Project.findById(req.params.id);
+      if (!project) return res.status(404).json({ message: 'Project not found' });
+
+      const newFeedback = { guideName: req.user.name, comment };
+      project.feedback.push(newFeedback);
+      
+      // Find the student for this project to notify them
+      const student = await User.findOne({ projectId: project._id, role: 'student' });
+      
+      if (student) {
+        await Notification.create({
+          title: 'New Feedback Received',
+          message: `${req.user.name} left feedback on your project: "${comment.substring(0, 50)}..."`,
+          type: 'info',
+          targetRoles: [],
+          targetUsers: [student._id],
+          projectId: project._id
+        });
+      }
+
+      await project.save();
+      return res.status(201).json(project.feedback[project.feedback.length - 1]);
+    } else {
+      // In-memory fallback
+      const project = dbStore.projects.find(p => p._id === req.params.id);
+      if (!project) return res.status(404).json({ message: 'Project not found in fallback database' });
+
+      const newFeedback = { guideName: req.user.name, comment, date: new Date(), _id: 'fb_' + Math.random().toString(36).substr(2, 9) };
+      if (!project.feedback) project.feedback = [];
+      project.feedback.push(newFeedback);
+
+      const student = dbStore.users.find(u => u.projectId === project._id && u.role === 'student');
+      if (student) {
+        if (!dbStore.notifications) dbStore.notifications = [];
+        dbStore.notifications.push({
+          _id: 'notif_' + Math.random().toString(36).substr(2, 9),
+          title: 'New Feedback Received',
+          message: `${req.user.name} left feedback on your project: "${comment.substring(0, 50)}..."`,
+          type: 'info',
+          targetRoles: [],
+          targetUsers: [student._id.toString()],
+          projectId: project._id,
+          readBy: [],
+          createdAt: new Date()
+        });
+      }
+
+      return res.status(201).json(newFeedback);
     }
   } catch (error) {
     res.status(500).json({ message: error.message });

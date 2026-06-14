@@ -8,6 +8,8 @@ import connectDB from './config/db.js';
 import authRoutes from './routes/auth.js';
 import projectRoutes from './routes/projects.js';
 import logRoutes from './routes/logs.js';
+import notificationRoutes from './routes/notifications.js';
+import announcementRoutes from './routes/announcements.js';
 
 dotenv.config();
 
@@ -28,6 +30,8 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use('/api/auth', authRoutes);
 app.use('/api/projects', projectRoutes);
 app.use('/api/logs', logRoutes);
+app.use('/api/notifications', notificationRoutes);
+app.use('/api/announcements', announcementRoutes);
 
 // Base route to check API status and database connection
 app.get('/', (req, res) => {

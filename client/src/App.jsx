@@ -7,7 +7,7 @@ import Workflow from './components/Workflow';
 import Footer from './components/Footer';
 
 import CtaSection from './components/CtaSection';
-import LoginModal from './components/LoginModal';
+import HodLoginPage from './components/HodLoginPage';
 import StudentLoginPage from './components/StudentLoginPage';
 import StudentRegisterPage from './components/StudentRegisterPage';
 import GuideLoginPage from './components/GuideLoginPage';
@@ -123,6 +123,11 @@ function AppContent() {
     return <GuideLoginPage onBack={() => handleSetLoginRole(null)} />;
   }
 
+  // Full-screen HOD Login Page
+  if (!user && loginRole === 'hod') {
+    return <HodLoginPage onBack={() => handleSetLoginRole(null)} />;
+  }
+
   return (
     <div className="min-h-screen font-sans selection:bg-indigo-600 selection:text-white flex flex-col justify-between">
       {/* Shared fixed Navbar (hidden for student, guide, and hod dashboards since they have their own) */}
@@ -155,13 +160,6 @@ function AppContent() {
       {!(user && (user.role === 'student' || user.role === 'guide' || user.role === 'hod')) && (
         <Footer onScrollToSection={scrollToSection} />
       )}
-
-      {/* Login Modals (for HOD only) */}
-      <LoginModal 
-        role={loginRole} 
-        isOpen={!!loginRole && loginRole !== 'student' && loginRole !== 'student-register' && loginRole !== 'guide'} 
-        onClose={() => handleSetLoginRole(null)} 
-      />
     </div>
   );
 }
