@@ -5,10 +5,9 @@ import { useAuth } from '../../context/AuthContext';
 export default function Topbar({ isCollapsed, setIsCollapsed, activeTab }) {
   const { user } = useAuth();
 
-  // Simple title mapper
   const getTitle = () => {
     const titles = {
-      'dashboard': user?.role === 'guide' ? 'Guide Dashboard' : 'Student Dashboard',
+      'dashboard': user?.role === 'hod' ? 'HOD Command Center' : user?.role === 'guide' ? 'Guide Dashboard' : 'Student Dashboard',
       'my-projects': 'My Projects',
       'assigned-projects': 'Assigned Projects',
       'upload-project': 'Upload Project',
@@ -21,7 +20,17 @@ export default function Topbar({ isCollapsed, setIsCollapsed, activeTab }) {
       'reviews': 'Reviews & Feedback',
       'meetings': 'Meetings',
       'reports': 'Reports',
-      'profile': 'My Profile'
+      'profile': 'My Profile',
+      'approvals': 'Project Approvals',
+      'projects': 'Department Projects',
+      'guides': 'Guide Management',
+      'groups': 'Student Groups',
+      'analytics': 'Analytics & Reports',
+      'announcements': 'Announcements',
+      'viva': 'Viva & Evaluation',
+      'repository': 'Project Repository',
+      'activity': 'Activity Logs',
+      'settings': 'System Settings'
     };
     return titles[activeTab] || 'Dashboard';
   };
@@ -57,6 +66,16 @@ export default function Topbar({ isCollapsed, setIsCollapsed, activeTab }) {
           />
         </div>
 
+        {/* Department Selector for HOD */}
+        {user?.role === 'hod' && (
+          <select className="hidden md:block bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold px-3 py-2 focus:outline-none focus:border-indigo-500 text-slate-700">
+            <option>Computer Science (CSE)</option>
+            <option>Information Science (ISE)</option>
+            <option>Artifical Intelligence (AIML)</option>
+            <option>Data Science (DS)</option>
+          </select>
+        )}
+
         {/* Notifications */}
         <button className="relative p-2 text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-full transition-colors">
           <Bell className="w-5 h-5" />
@@ -71,11 +90,11 @@ export default function Topbar({ isCollapsed, setIsCollapsed, activeTab }) {
           <div className="text-right hidden sm:block">
             <span className="block text-xs font-bold text-slate-800">{user?.name}</span>
             <span className="block text-[10px] font-bold text-slate-400">
-              {user?.role === 'guide' ? 'Guide / Faculty' : 'Student'}
+              {user?.role === 'guide' ? 'Guide / Faculty' : user?.role === 'hod' ? 'Head of Department' : 'Student'}
             </span>
           </div>
           <div className="w-9 h-9 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-sm border-2 border-white shadow-sm">
-            {user?.role === 'guide' ? 'GD' : user?.name?.charAt(0).toUpperCase()}
+            {user?.role === 'guide' ? 'GD' : user?.role === 'hod' ? 'HOD' : user?.name?.charAt(0).toUpperCase()}
           </div>
         </div>
       </div>

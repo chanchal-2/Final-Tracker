@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AquaSense – AI Water Shortage Early Warning</title>
+  <meta name="description" content="AquaSense — AI-powered water shortage early warning system for Bengaluru. Predicts water stress across 198 wards using Machine Learning." />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Roboto:wght@400;500&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.31.0/dist/tabler-icons.min.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.31.0/dist/tabler-icons.min.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+  <link rel="stylesheet" href="styles.css?v=1.0.1">
+</head>
+
+<body>
+
+  <!-- TOAST CONTAINER -->
+  <div id="toast-container"></div>
+
+  <!-- ═══ HOME SCREEN (loaded dynamically) ═══ -->
+  <div id="home-container"></div>
+
+  <!-- ═══ LOGIN SCREEN (loaded dynamically) ═══ -->
+  <div id="login-container"></div>
+
+  <!-- ═══ ADMIN LOGIN SCREEN (loaded dynamically) ═══ -->
+  <div id="admin-login-container"></div>
+
+  <!-- ═══ CITIZEN LOGIN SCREEN (loaded dynamically) ═══ -->
+  <div id="citizen-login-container"></div>
+
+  <!-- ═══ CITIZEN SIGNUP SCREEN (loaded dynamically) ═══ -->
+  <div id="citizen-signup-container"></div>
+
+  <!-- ═══ SCREEN 2: MAIN APP ═══ -->
+  <div id="app-screen" class="screen">
+
+    <!-- TOP BAR -->
+    <div class="g-topbar">
+      <a class="top-logo">
+        <div class="top-logo-mark"><i class="ti ti-droplet"></i></div>
+        <div class="top-logo-text">AquaSense</div>
+      </a>
+
+      <div class="top-search">
+        <i class="ti ti-search"></i>
+        <input type="text" placeholder="Search wards, alerts, reports..." />
+      </div>
+
+      <div class="top-right">
+        <div class="live-chip"><span class="live-dot"></span> Live</div>
+        <div class="icon-btn" onclick="triggerTestNotification()" title="Test Notifications">
+          <i class="ti ti-bell"></i>
+          <span class="notif-badge" id="notif-count">3</span>
+        </div>
+        <div class="user-chip" id="user-chip" onclick="logout()">
+          <div class="user-avatar" id="user-avatar" style="background:var(--blue)">A</div>
+          <div>
+            <div class="user-name" id="user-name-display">Admin User</div>
+            <div class="role-badge" id="role-badge-display">ADMIN</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BODY -->
+    <div class="g-body">
+
+      <!-- SIDEBAR -->
+      <div class="g-sidebar" id="sidebar">
+        <div class="nav-section admin-only">City Overview</div>
+        <div class="nav-item active admin-only" onclick="showPage('dashboard')"><i class="ti ti-layout-dashboard"></i> Dashboard</div>
+        <div class="nav-item admin-only" onclick="showPage('map')"><i class="ti ti-map-2"></i> Ward Risk Map</div>
+        <div class="nav-item admin-only" onclick="showPage('forecast')"><i class="ti ti-chart-area-line"></i> AI Forecast</div>
+
+        <div class="nav-section citizen-only" style="display:none;">Water Management</div>
+        <div class="nav-item citizen-only" style="display:none;" onclick="showPage('insights')"><i class="ti ti-bulb"></i> Water Insights</div>
+
+        <div class="nav-section" id="admin-section">Management</div>
+        <div class="nav-item" id="nav-alerts" onclick="showPage('alerts')"><i class="ti ti-alert-triangle"></i> Active
+          Alerts <span class="nav-pill">5</span></div>
+        <div class="nav-item admin-only" id="nav-admin" onclick="showPage('admin')"><i class="ti ti-settings"></i> Admin
+          Panel</div>
+        <div class="nav-item" onclick="showPage('complaints')"><i class="ti ti-message-report"></i> Community Reports
+          <span class="nav-pill amber">8</span></div>
+
+        <div class="nav-section">Personal</div>
+        <div class="nav-item citizen-only" onclick="showPage('myward')"><i class="ti ti-home"></i> My Ward</div>
+        <div class="nav-item citizen-only" onclick="showPage('budget')"><i class="ti ti-droplet"></i> Water Budget</div>
+        <div class="nav-item citizen-only" onclick="showPage('badges')"><i class="ti ti-award"></i> My Badges</div>
+
+        <div class="sidebar-bottom">
+          <div class="model-chip">
+            <i class="ti ti-cpu"></i>
+            <div>
+              <div style="font-size:12px;font-weight:500;color:var(--gray800);font-family:var(--font)">Random Forest
+              </div>
+              <div style="font-size:11px;color:var(--green);margin-top:1px">91.4% accuracy</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- MAIN CONTENT — pages loaded here dynamically -->
+      <div class="g-main" id="g-main">
+        <!-- Page partials are injected here by loadPage() -->
+      </div>
+
+    </div><!-- /g-body -->
+  </div><!-- /app-screen -->
+
+  <!-- MODAL CONTAINER (loaded dynamically) -->
+  <div id="modal-container"></div>
+
+  <script src="swipe-back.js?v=1.0.1"></script>
+  <script src="app.js?v=1.0.1"></script>
+</body>
+
+</html>

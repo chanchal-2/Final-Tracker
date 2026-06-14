@@ -235,6 +235,15 @@ router.post('/:id/documents', protect, upload.single('file'), async (req, res) =
       if (!project) return res.status(404).json({ message: 'Project not found' });
 
       project.documents.push({ title, type, url });
+      
+      // Send notification
+      project.notifications.push({
+        title: 'New Document Uploaded',
+        message: `A new ${type} titled "${title}" has been uploaded.`,
+        type: 'info',
+        date: new Date()
+      });
+
       const updatedProject = await project.save();
       return res.status(201).json(updatedProject.documents[updatedProject.documents.length - 1]);
     } else {
@@ -244,6 +253,16 @@ router.post('/:id/documents', protect, upload.single('file'), async (req, res) =
       if (!project.documents) project.documents = [];
       const newDoc = { title, type, url, uploadDate: new Date(), _id: 'doc_' + Math.random().toString(36).substr(2, 9) };
       project.documents.push(newDoc);
+
+      if (!project.notifications) project.notifications = [];
+      project.notifications.push({
+        title: 'New Document Uploaded',
+        message: `A new ${type} titled "${title}" has been uploaded.`,
+        type: 'info',
+        date: new Date(),
+        isRead: false
+      });
+
       return res.status(201).json(newDoc);
     }
   } catch (error) {

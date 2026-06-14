@@ -15,7 +15,12 @@ import {
   Activity,
   CheckSquare,
   Video,
-  PieChart
+  PieChart,
+  Database,
+  Settings,
+  FolderKanban,
+  Users,
+  AlertTriangle
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
@@ -38,6 +43,7 @@ export default function Sidebar({ activeTab, setActiveTab, isCollapsed, setIsCol
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { id: 'assigned-projects', label: 'Assigned Projects', icon: FolderGit2 },
     { id: 'student-progress', label: 'Student Progress', icon: Activity },
+    { id: 'approvals', label: 'Project Approvals', icon: CheckSquare },
     { id: 'milestones', label: 'Milestones', icon: Milestone },
     { id: 'reviews', label: 'Reviews & Feedback', icon: CheckSquare },
     { id: 'documents', label: 'Documents', icon: FileText },
@@ -47,7 +53,16 @@ export default function Sidebar({ activeTab, setActiveTab, isCollapsed, setIsCol
     { id: 'profile', label: 'Profile', icon: User },
   ];
 
-  const navItems = user?.role === 'guide' ? guideNavItems : studentNavItems;
+  const hodNavItems = [
+    { id: 'dashboard', label: 'Dashboard Overview', icon: LayoutDashboard },
+    { id: 'approvals', label: 'Project Approvals', icon: CheckSquare },
+    { id: 'guides', label: 'Guide Management', icon: Users },
+    { id: 'risk', label: 'Risk Monitoring', icon: AlertTriangle },
+    { id: 'announcements', label: 'Announcements & Deadlines', icon: Bell },
+    { id: 'repository', label: 'Document Repository', icon: Database }
+  ];
+
+  const navItems = user?.role === 'hod' ? hodNavItems : user?.role === 'guide' ? guideNavItems : studentNavItems;
 
   return (
     <aside 

@@ -4,6 +4,7 @@ import Hero from './components/Hero';
 import AboutCard from './components/AboutCard';
 import FeaturesSection from './components/FeaturesSection';
 import Workflow from './components/Workflow';
+import Footer from './components/Footer';
 
 import CtaSection from './components/CtaSection';
 import LoginModal from './components/LoginModal';
@@ -124,49 +125,35 @@ function AppContent() {
 
   return (
     <div className="min-h-screen font-sans selection:bg-indigo-600 selection:text-white flex flex-col justify-between">
-      {/* Shared fixed Navbar (hidden for student dashboard since it has its own) */}
-      {!(user && user.role === 'student') && (
-        <Navbar onLoginClick={handleSetLoginRole} onScrollToSection={scrollToSection} />
+      {/* Shared fixed Navbar (hidden for student, guide, and hod dashboards since they have their own) */}
+      {!(user && (user.role === 'student' || user.role === 'guide' || user.role === 'hod')) && (
+        <Navbar 
+          onLoginClick={handleSetLoginRole} 
+          onScrollToSection={scrollToSection} 
+        />
       )}
 
       {/* Main Content Area */}
-      {user && user.role === 'student' ? (
-        <StudentDashboard />
-      ) : (
-        <main className="flex-grow">
-          {user ? (
-            // Logged in Workspace Dashboard Views
-            user.role === 'guide' ? (
-              <GuideDashboard />
-            ) : (
-              <HodDashboard />
-            )
-          ) : (
-            // Logged out Landing Homepage Views
-            <>
-              <Hero onGetStarted={handleSetLoginRole} onLearnMore={handleLearnMore} />
-              <AboutCard />
-              <FeaturesSection />
-              <Workflow />
-              <CtaSection onCtaClick={handleSetLoginRole} />
-            </>
-          )}
-        </main>
-      )}
+      <main className="flex-grow">
+        {user ? (
+          user.role === 'student' ? <StudentDashboard /> : 
+          user.role === 'guide' ? <GuideDashboard /> : 
+          <HodDashboard />
+        ) : (
+          // Logged out Landing Homepage Views
+          <>
+            <Hero onGetStarted={handleSetLoginRole} onLearnMore={handleLearnMore} />
+            <AboutCard />
+            <FeaturesSection />
+            <Workflow />
+            <CtaSection onCtaClick={handleSetLoginRole} />
+          </>
+        )}
+      </main>
 
-      {/* Footer (hidden for student dashboard) */}
-      {!(user && user.role === 'student') && (
-        <footer className="bg-[#0B1220] border-t border-slate-800 text-slate-400 py-10 text-center text-[10px] font-bold uppercase tracking-wider relative z-10">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-6">
-            <span>© {new Date().getFullYear()} ProjectTracker. All rights reserved.</span>
-            <div className="flex items-center gap-6">
-              <button onClick={() => scrollToSection('home')} className="hover:text-white transition-colors">Home</button>
-              <button onClick={() => scrollToSection('about')} className="hover:text-white transition-colors">About</button>
-              <button onClick={() => scrollToSection('features')} className="hover:text-white transition-colors">Features</button>
-              <button onClick={() => scrollToSection('workflow')} className="hover:text-white transition-colors">Workflow</button>
-            </div>
-          </div>
-        </footer>
+      {/* Footer (hidden for student, guide, and hod dashboards) */}
+      {!(user && (user.role === 'student' || user.role === 'guide' || user.role === 'hod')) && (
+        <Footer onScrollToSection={scrollToSection} />
       )}
 
       {/* Login Modals (for HOD only) */}

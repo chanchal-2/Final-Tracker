@@ -16,6 +16,20 @@ export const AuthProvider = ({ children }) => {
         return;
       }
 
+      // --- BYPASS MONGODB FOR UI TESTING ---
+      if (token === 'mock-token-hod') {
+        setUser({
+          _id: 'mock-hod-123',
+          name: 'Prof. H.R. Gowda',
+          email: 'hod@projecttracker.edu',
+          role: 'hod',
+          department: 'Computer Science'
+        });
+        setLoading(false);
+        return;
+      }
+      // -------------------------------------
+
       try {
         const res = await fetch('/api/auth/me', {
           headers: {
@@ -44,6 +58,22 @@ export const AuthProvider = ({ children }) => {
 
   // Login handler
   const login = async (email, password) => {
+    // --- BYPASS MONGODB FOR UI TESTING ---
+    if (email === 'hod' || email.includes('hod')) {
+      const mockUser = {
+        _id: 'mock-hod-123',
+        name: 'Prof. H.R. Gowda',
+        email: 'hod@projecttracker.edu',
+        role: 'hod',
+        department: 'Computer Science'
+      };
+      localStorage.setItem('token', 'mock-token-hod');
+      setToken('mock-token-hod');
+      setUser(mockUser);
+      return { success: true };
+    }
+    // -------------------------------------
+
     try {
       const res = await fetch('/api/auth/login', {
         method: 'POST',

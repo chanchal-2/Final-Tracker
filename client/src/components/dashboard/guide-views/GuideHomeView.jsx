@@ -12,15 +12,16 @@ export default function GuideHomeView({ projects, setActiveTab }) {
   return (
     <div className="space-y-6">
       {/* Welcome Banner */}
-      <div className="bg-gradient-to-r from-indigo-650 to-indigo-800 rounded-[24px] p-8 text-white shadow-premium relative overflow-hidden">
+      <div className="bg-[#0B1220] border border-slate-800 rounded-[24px] p-8 shadow-xl relative overflow-hidden">
         <div className="relative z-10 max-w-2xl">
-          <h2 className="text-2xl sm:text-3xl font-black mb-2 tracking-tight">Overview Dashboard</h2>
-          <p className="text-indigo-100 font-semibold text-sm leading-relaxed">
-            Monitor and manage all your assigned student project groups. You have {pendingReviews} projects awaiting initial evaluation.
+          <h2 className="text-2xl sm:text-3xl font-black mb-2 tracking-tight text-white">Overview Dashboard</h2>
+          <p className="text-slate-400 font-semibold text-sm leading-relaxed">
+            Monitor and manage all your assigned student project groups. You have <span className="text-indigo-400 font-bold">{pendingReviews}</span> projects awaiting initial evaluation.
           </p>
         </div>
-        <div className="absolute -right-20 -top-20 w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
-        <div className="absolute -right-10 -bottom-10 w-40 h-40 bg-indigo-500/20 rounded-full blur-2xl"></div>
+        {/* Glow effects */}
+        <div className="absolute -right-20 -top-20 w-64 h-64 bg-indigo-500/20 rounded-full blur-[80px] pointer-events-none"></div>
+        <div className="absolute right-20 -bottom-20 w-40 h-40 bg-indigo-600/10 rounded-full blur-[50px] pointer-events-none"></div>
       </div>
 
       {/* Summary Stats Grid */}

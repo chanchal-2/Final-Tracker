@@ -10,7 +10,11 @@ import AssignedProjectsView from './dashboard/guide-views/AssignedProjectsView';
 import StudentProgressView from './dashboard/guide-views/StudentProgressView';
 import GuideMilestonesView from './dashboard/guide-views/GuideMilestonesView';
 import ReviewsFeedbackView from './dashboard/guide-views/ReviewsFeedbackView';
+import ReportsView from './dashboard/guide-views/ReportsView';
+import DocumentsView from './dashboard/guide-views/DocumentsView';
+import NotificationsView from './dashboard/guide-views/NotificationsView';
 import PlaceholderViews from './dashboard/guide-views/PlaceholderViews';
+import ProjectApprovalView from './dashboard/hod-views/ProjectApprovalView';
 
 export default function GuideDashboard() {
   const { user, token } = useAuth();
@@ -74,12 +78,13 @@ export default function GuideDashboard() {
       case 'dashboard': return <GuideHomeView {...props} />;
       case 'assigned-projects': return <AssignedProjectsView {...props} />;
       case 'student-progress': return <StudentProgressView {...props} />;
+      case 'approvals': return <ProjectApprovalView {...props} />;
       case 'milestones': return <GuideMilestonesView {...props} />;
       case 'reviews': return <ReviewsFeedbackView {...props} />;
-      case 'documents': return <PlaceholderViews.Documents {...props} />;
+      case 'documents': return <DocumentsView {...props} />;
       case 'meetings': return <PlaceholderViews.Meetings {...props} />;
-      case 'notifications': return <PlaceholderViews.Notifications {...props} />;
-      case 'reports': return <PlaceholderViews.Reports {...props} />;
+      case 'notifications': return <NotificationsView {...props} />;
+      case 'reports': return <ReportsView {...props} />;
       case 'profile': return <PlaceholderViews.Profile {...props} />;
       default: return <GuideHomeView {...props} />;
     }
