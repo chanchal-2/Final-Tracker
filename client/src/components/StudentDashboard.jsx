@@ -6,14 +6,11 @@ import { AlertCircle } from 'lucide-react';
 
 // Placeholder Views
 import DashboardHome from './dashboard/views/DashboardHome';
-import MyProjectsView from './dashboard/views/MyProjectsView';
 import UploadProjectView from './dashboard/views/UploadProjectView';
 import ProgressUpdatesView from './dashboard/views/ProgressUpdatesView';
 import DocumentsView from './dashboard/views/DocumentsView';
-import MilestonesView from './dashboard/views/MilestonesView';
 import NotificationsView from './dashboard/views/NotificationsView';
 import FeedbackView from './dashboard/views/FeedbackView';
-import ProfileView from './dashboard/views/ProfileView';
 
 export default function StudentDashboard() {
   const { user, token } = useAuth();
@@ -23,6 +20,37 @@ export default function StudentDashboard() {
   const [project, setProject] = useState(null);
   const [logs, setLogs] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  // Mock project data for UI testing (when MongoDB is offline)
+  const mockProject = {
+    _id: 'mock-proj-001',
+    title: 'AI-Powered Capstone Project Tracker',
+    description: 'A full-stack web application for managing final year capstone projects with real-time tracking, guide feedback, and milestone management.',
+    status: 'In Progress',
+    progress: 72,
+    guide: 'Dr. S. Sharma',
+    department: 'Computer Science',
+    teamMembers: ['Naveen Malviya', 'Priya Patel', 'Rahul Kumar'],
+    milestones: [
+      { title: 'Project Proposal Submission', date: 'Jan 15, 2026', status: 'done' },
+      { title: 'Literature Review', date: 'Feb 10, 2026', status: 'done' },
+      { title: 'System Design Document', date: 'Mar 5, 2026', status: 'done' },
+      { title: 'Prototype Development', date: 'Apr 20, 2026', status: 'active' },
+      { title: 'Testing & QA', date: 'May 30, 2026', status: 'locked' },
+      { title: 'Final Viva & Submission', date: 'Jun 25, 2026', status: 'locked' },
+    ],
+    documents: [
+      { title: 'Project Proposal', type: 'PDF', url: '#', uploadDate: new Date('2026-01-15') },
+      { title: 'System Architecture Diagram', type: 'DOC', url: '#', uploadDate: new Date('2026-03-05') },
+    ],
+    notifications: [
+      { _id: 'n1', title: 'Milestone Due Soon', message: 'Prototype Development is due in 5 days.', isRead: false, type: 'warning' },
+      { _id: 'n2', title: 'Guide Feedback Available', message: 'Dr. S. Sharma has reviewed your system design document.', isRead: false, type: 'info' },
+    ],
+    feedback: [
+      { _id: 'f1', message: 'Good progress on the system design. Please add more detail to the API section.', createdAt: new Date('2026-03-10'), guide: 'Dr. S. Sharma' }
+    ]
+  };
 
   // Fetch project details and logs
   const fetchData = async () => {
@@ -45,10 +73,17 @@ export default function StudentDashboard() {
             const logsData = await logsRes.json();
             setLogs(logsData);
           }
+          return; // Real data loaded, skip mock
         }
       }
+      // Fallback to mock data if API fails or returns empty
+      setProject(mockProject);
+      setLogs([]);
     } catch (err) {
       console.error('Error fetching student dashboard data:', err);
+      // Fallback to mock data on error
+      setProject(mockProject);
+      setLogs([]);
     } finally {
       setLoading(false);
     }
@@ -106,14 +141,11 @@ export default function StudentDashboard() {
     
     switch (activeTab) {
       case 'dashboard': return <DashboardHome {...props} />;
-      case 'my-projects': return <MyProjectsView {...props} />;
-      case 'upload-project': return <UploadProjectView {...props} />;
+      case 'upload-project': return <ProgressUpdatesView {...props} />;  // merged into progress-updates
       case 'progress-updates': return <ProgressUpdatesView {...props} />;
       case 'documents': return <DocumentsView {...props} />;
-      case 'milestones': return <MilestonesView {...props} />;
       case 'notifications': return <NotificationsView {...props} />;
       case 'feedback': return <FeedbackView {...props} />;
-      case 'profile': return <ProfileView {...props} />;
       default: return <DashboardHome {...props} />;
     }
   };

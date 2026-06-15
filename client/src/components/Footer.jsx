@@ -1,5 +1,5 @@
 import React from 'react';
-import { GraduationCap, Github, Twitter, Linkedin, Mail } from 'lucide-react';
+import { GraduationCap, Mail } from 'lucide-react';
 
 export default function Footer({ onScrollToSection }) {
   return (
@@ -21,17 +21,6 @@ export default function Footer({ onScrollToSection }) {
             <p className="text-sm text-slate-400 font-medium leading-relaxed mb-6 max-w-xs">
               The ultimate academic hub for centralizing student capstone projects, simplifying milestone evaluations, and streamlining feedback.
             </p>
-            <div className="flex items-center gap-4">
-              <a href="#" className="w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-slate-400 hover:bg-indigo-600 hover:text-white hover:border-indigo-500 transition-all">
-                <Twitter className="w-4 h-4" />
-              </a>
-              <a href="#" className="w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-slate-400 hover:bg-indigo-600 hover:text-white hover:border-indigo-500 transition-all">
-                <Github className="w-4 h-4" />
-              </a>
-              <a href="#" className="w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-slate-400 hover:bg-indigo-600 hover:text-white hover:border-indigo-500 transition-all">
-                <Linkedin className="w-4 h-4" />
-              </a>
-            </div>
           </div>
 
           {/* Quick Links */}

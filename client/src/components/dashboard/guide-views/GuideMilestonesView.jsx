@@ -1,14 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Save, CheckCircle, Clock, AlertCircle, Milestone } from 'lucide-react';
-
+ 
 export default function GuideMilestonesView({ projects, setProjects, token }) {
   const [selectedProjId, setSelectedProjId] = useState('');
   const [milestones, setMilestones] = useState([]);
   const [loading, setLoading] = useState(false);
   const [msg, setMsg] = useState('');
-
+ 
   const selectedProj = projects.find(p => p._id === selectedProjId);
-
+ 
   const handleSelect = (id) => {
     setSelectedProjId(id);
     const proj = projects.find(p => p._id === id);
@@ -16,7 +16,13 @@ export default function GuideMilestonesView({ projects, setProjects, token }) {
       setMilestones(proj.milestones);
     }
   };
-
+ 
+  useEffect(() => {
+    if (projects && projects.length > 0 && !selectedProjId) {
+      handleSelect(projects[0]._id);
+    }
+  }, [projects, selectedProjId]);
+ 
   const handleMilestoneChange = (index, field, value) => {
     const updated = [...milestones];
     updated[index] = { ...updated[index], [field]: value };

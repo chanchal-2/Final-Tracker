@@ -8,9 +8,19 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <title>ProjectTracker - Capstone Project Lifecycle Hub</title>
+  <!-- cache-bust: v2 -->
   </head>
   <body>
     <div id="root"></div>
+    <script>
+      // Clear any stale real-JWT tokens (keep only mock tokens so app works offline)
+      try {
+        var t = localStorage.getItem('token');
+        if (t && t !== 'mock-token-student' && t !== 'mock-token-guide' && t !== 'mock-token-hod') {
+          localStorage.removeItem('token');
+        }
+      } catch(e) {}
+    </script>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

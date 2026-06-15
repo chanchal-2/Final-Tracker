@@ -95,7 +95,7 @@ export default function GuideHomeView({ projects, setActiveTab }) {
                     </span>
                   </div>
                   <h4 className="text-sm font-bold text-slate-800 line-clamp-1">{proj.title}</h4>
-                  <p className="text-[10px] font-bold text-slate-500 mt-1 uppercase">Team: {proj.team}</p>
+                  <p className="text-[10px] font-bold text-slate-500 mt-1 uppercase">Student: {proj.student || proj.team}</p>
                 </div>
                 
                 <div className="w-full sm:w-48">

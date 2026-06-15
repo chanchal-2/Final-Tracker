@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Save, User, Calendar, FileText, CheckCircle, Clock, AlertTriangle } from 'lucide-react';
 
 export default function ReviewsFeedbackView({ projects, setProjects, token, user }) {
@@ -20,6 +20,12 @@ export default function ReviewsFeedbackView({ projects, setProjects, token, user
       setProgress(proj.progress);
     }
   };
+
+  useEffect(() => {
+    if (projects && projects.length > 0 && !selectedProjId) {
+      handleSelect(projects[0]._id);
+    }
+  }, [projects, selectedProjId]);
 
   const handleSave = async (e) => {
     e.preventDefault();

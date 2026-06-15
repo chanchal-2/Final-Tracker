@@ -69,10 +69,9 @@ export default function Topbar({ isCollapsed, setIsCollapsed, activeTab }) {
   const getTitle = () => {
     const titles = {
       'dashboard': user?.role === 'hod' ? 'HOD Command Center' : user?.role === 'guide' ? 'Guide Dashboard' : 'Student Dashboard',
-      'my-projects': 'My Projects',
       'assigned-projects': 'Assigned Projects',
       'upload-project': 'Upload Project',
-      'progress-updates': 'Progress Updates',
+      'progress-updates': 'Submit & Upload',
       'student-progress': 'Student Progress',
       'documents': 'Documents',
       'milestones': 'Milestones',
@@ -81,7 +80,6 @@ export default function Topbar({ isCollapsed, setIsCollapsed, activeTab }) {
       'reviews': 'Reviews & Feedback',
       'meetings': 'Meetings',
       'reports': 'Reports',
-      'profile': 'My Profile',
       'approvals': 'Project Approvals',
       'projects': 'Department Projects',
       'guides': 'Guide Management',

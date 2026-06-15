@@ -8,7 +8,7 @@ export default function AssignedProjectsView({ projects, setActiveTab }) {
   const filteredProjects = projects.filter(p => {
     const matchesSearch = p.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
                           p.projectId.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          p.team.toLowerCase().includes(searchTerm.toLowerCase());
+                          (p.student || p.team || '').toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus = statusFilter === 'All' || p.status === statusFilter;
     return matchesSearch && matchesStatus;
   });
@@ -27,7 +27,7 @@ export default function AssignedProjectsView({ projects, setActiveTab }) {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4">
         <div>
           <h2 className="text-2xl font-black text-[#0B1220] tracking-tight">Assigned Projects</h2>
-          <p className="text-sm text-slate-500 font-semibold mt-1">Manage and track all {projects.length} project groups under your supervision.</p>
+          <p className="text-sm text-slate-500 font-semibold mt-1">Manage and track all {projects.length} individual projects under your supervision.</p>
         </div>
       </div>
 
@@ -67,9 +67,7 @@ export default function AssignedProjectsView({ projects, setActiveTab }) {
             <thead>
               <tr className="bg-slate-50 border-b border-slate-100 text-[10px] uppercase tracking-wider font-black text-slate-400">
                 <th className="p-4 rounded-tl-2xl">Project ID & Title</th>
-                <th className="p-4">Team Members</th>
-                <th className="p-4">Progress</th>
-                <th className="p-4">Status</th>
+                <th className="p-4">Student</th>
                 <th className="p-4 text-right">Actions</th>
               </tr>
             </thead>
@@ -83,30 +81,9 @@ export default function AssignedProjectsView({ projects, setActiveTab }) {
                     </div>
                   </td>
                   <td className="p-4">
-                    <span className="text-xs font-semibold text-slate-600 line-clamp-2 max-w-[200px]">
-                      {proj.team}
+                    <span className="text-xs font-semibold text-slate-600">
+                      {proj.student || proj.team}
                     </span>
-                  </td>
-                  <td className="p-4 w-48">
-                    <div className="flex items-center gap-3">
-                      <div className="flex-1 bg-slate-100 rounded-full h-1.5 w-24">
-                        <div className="bg-indigo-500 h-1.5 rounded-full" style={{ width: `${proj.progress}%` }}></div>
-                      </div>
-                      <span className="text-xs font-bold text-slate-700">{proj.progress}%</span>
-                    </div>
-                  </td>
-                  <td className="p-4">
-                    <div className="flex items-center gap-2">
-                      {getStatusIcon(proj.status)}
-                      <span className={`text-xs font-bold ${
-                        proj.status === 'Approved' ? 'text-emerald-600' :
-                        proj.status === 'Delayed' ? 'text-amber-600' :
-                        proj.status === 'At Risk' ? 'text-red-600' :
-                        'text-slate-600'
-                      }`}>
-                        {proj.status === 'Approved' ? 'On Track' : proj.status}
-                      </span>
-                    </div>
                   </td>
                   <td className="p-4 text-right">
                     <button 

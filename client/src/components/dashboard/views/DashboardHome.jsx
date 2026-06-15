@@ -1,5 +1,5 @@
 import React from 'react';
-import { CheckCircle, Clock, FileText, UploadCloud, ArrowRight, User } from 'lucide-react';
+import { CheckCircle, Clock, FileText, UploadCloud, ArrowRight, User, BarChart3, Users } from 'lucide-react';
 
 // Custom SVG Donut Chart
 const DonutChart = ({ percentage }) => {
@@ -35,15 +35,8 @@ const DonutChart = ({ percentage }) => {
 
 export default function DashboardHome({ project, logs, setActiveTab }) {
   // Stats calculations
-  const totalMilestones = project.milestones?.length || 0;
-  const completedMilestones = project.milestones?.filter(m => m.status === 'done').length || 0;
-  const pendingTasks = totalMilestones - completedMilestones;
-  
   const documentsCount = project.documents?.length || 0;
   const unreadNotifications = project.notifications?.filter(n => !n.isRead).length || 0;
-  
-  // Get upcoming milestone
-  const upcomingMilestone = project.milestones?.find(m => m.status === 'active' || m.status === 'locked');
 
   return (
     <div className="space-y-6">
@@ -64,15 +57,15 @@ export default function DashboardHome({ project, logs, setActiveTab }) {
           </div>
         </div>
 
-        {/* Stat Card 2: Pending Tasks */}
+        {/* Stat Card 2: Documents */}
         <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
           <div className="flex items-start justify-between">
             <div>
-              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">Pending Milestones</span>
-              <span className="text-xl font-black text-amber-600 tracking-tight">{pendingTasks} Tasks</span>
+              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">Docs Submitted</span>
+              <span className="text-xl font-black text-amber-600 tracking-tight">{documentsCount} Files</span>
             </div>
             <div className="w-10 h-10 rounded-xl bg-amber-50 flex items-center justify-center text-amber-600">
-              <Clock className="w-5 h-5" />
+              <FileText className="w-5 h-5" />
             </div>
           </div>
         </div>
@@ -123,7 +116,7 @@ export default function DashboardHome({ project, logs, setActiveTab }) {
                 You're making great progress!
               </h3>
               <p className="text-sm text-slate-500 font-medium mb-6 max-w-md">
-                You have completed {completedMilestones} out of {totalMilestones} milestones. Keep up the good work and submit your next update on time.
+                Your project is <strong className="text-indigo-600">{project.progress}% complete</strong>. Keep up the great work — submit your latest update and upload your documents on time.
               </p>
               
               <div className="flex flex-wrap items-center justify-center sm:justify-start gap-3">
@@ -145,38 +138,80 @@ export default function DashboardHome({ project, logs, setActiveTab }) {
             </div>
           </div>
 
-          {/* Recent Updates */}
-          <div className="bg-white border border-slate-200 rounded-2xl p-6 sm:p-8 shadow-sm">
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="text-sm font-extrabold text-[#0B1220] uppercase tracking-wider">Recent Logs</h3>
-              <button onClick={() => setActiveTab('progress-updates')} className="text-[10px] font-bold text-indigo-600 hover:text-indigo-700 uppercase tracking-widest">
-                View All
-              </button>
+          {/* Project Performance Analytics Section */}
+          <div className="bg-white border border-slate-200 rounded-[24px] p-6 sm:p-8 shadow-premium space-y-8 relative overflow-hidden group/card">
+            {/* Subtle glow background */}
+            <div className="absolute top-0 right-0 w-48 h-48 bg-indigo-50/50 rounded-full blur-3xl pointer-events-none transition-all duration-500 group-hover/card:bg-indigo-100/50"></div>
+
+            {/* Header */}
+            <div className="flex items-center gap-3 relative z-10">
+              <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center transition-transform duration-300 group-hover/card:scale-110">
+                <BarChart3 className="w-5 h-5" />
+              </div>
+              <div>
+                <h3 className="text-base font-extrabold text-[#0B1220] tracking-tight">Project Performance Analytics</h3>
+                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mt-0.5">Monthly Insights & Work Progress</p>
+              </div>
             </div>
-            
-            <div className="space-y-4">
-              {logs.length === 0 ? (
-                <div className="text-center py-8 text-xs text-slate-400 font-bold bg-slate-50 rounded-xl border border-slate-100 border-dashed">
-                  No updates submitted yet.
-                </div>
-              ) : (
-                logs.slice(0, 3).map((wl, i) => (
-                  <div key={i} className="flex gap-4 p-4 rounded-xl border border-slate-100 hover:border-indigo-100 hover:bg-indigo-50/30 transition-colors">
-                    <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center shrink-0">
-                      <User className="w-4 h-4 text-slate-400" />
-                    </div>
-                    <div>
-                      <div className="flex items-center gap-2 mb-1">
-                        <span className="text-xs font-bold text-[#0B1220]">{wl.author}</span>
-                        <span className="text-[10px] font-semibold text-slate-400">{new Date(wl.date).toLocaleDateString()}</span>
-                      </div>
-                      <p className="text-xs text-slate-600 font-medium line-clamp-2 leading-relaxed">
-                        {wl.log}
-                      </p>
-                    </div>
+
+
+
+            {/* Performance Stats Footer Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 relative z-10">
+              
+              {/* Stat 1: Documents */}
+              <div className="bg-white border border-slate-200 hover:border-indigo-300 rounded-2xl p-4 shadow-sm hover:shadow-md transition-all group/stat cursor-pointer flex flex-col justify-between space-y-4">
+                <div className="flex items-start justify-between">
+                  <div>
+                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">Documents Submitted</span>
+                    <span className="text-lg font-black text-slate-800 tracking-tight">8 / 10</span>
                   </div>
-                ))
-              )}
+                  <div className="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center transition-transform duration-300 group-hover/stat:rotate-12">
+                    <FileText className="w-4 h-4" />
+                  </div>
+                </div>
+                {/* Custom Progress Bar */}
+                <div className="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                  <div className="h-full bg-indigo-600 rounded-full" style={{ width: '80%' }}></div>
+                </div>
+              </div>
+
+              {/* Stat 2: Meetings */}
+              <div className="bg-white border border-slate-200 hover:border-indigo-300 rounded-2xl p-4 shadow-sm hover:shadow-md transition-all group/stat cursor-pointer flex flex-col justify-between space-y-4">
+                <div className="flex items-start justify-between">
+                  <div>
+                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">Guide Meetings</span>
+                    <span className="text-lg font-black text-slate-800 tracking-tight">6 Meetings</span>
+                  </div>
+                  <div className="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center transition-transform duration-300 group-hover/stat:rotate-12">
+                    <Users className="w-4 h-4" />
+                  </div>
+                </div>
+                {/* Success Indicator */}
+                <div className="flex items-center gap-1.5">
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                  <span className="text-[10px] font-bold text-emerald-600 uppercase tracking-wider">On Track</span>
+                </div>
+              </div>
+
+              {/* Stat 3: Feedback Resolved */}
+              <div className="bg-white border border-slate-200 hover:border-indigo-300 rounded-2xl p-4 shadow-sm hover:shadow-md transition-all group/stat cursor-pointer flex flex-col justify-between space-y-4">
+                <div className="flex items-start justify-between">
+                  <div>
+                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">Feedback Resolved</span>
+                    <span className="text-lg font-black text-slate-800 tracking-tight">12 Issues</span>
+                  </div>
+                  <div className="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center transition-transform duration-300 group-hover/stat:rotate-12">
+                    <CheckCircle className="w-4 h-4" />
+                  </div>
+                </div>
+                {/* Progress Indicator */}
+                <div className="flex items-center gap-1.5">
+                  <span className="w-2 h-2 rounded-full bg-indigo-500"></span>
+                  <span className="text-[10px] font-bold text-indigo-600 uppercase tracking-wider">100% Resolved</span>
+                </div>
+              </div>
+
             </div>
           </div>
 
@@ -185,35 +220,6 @@ export default function DashboardHome({ project, logs, setActiveTab }) {
         {/* RIGHT COLUMN */}
         <div className="space-y-6">
           
-          {/* Upcoming Deadline */}
-          <div className="bg-[#0B1220] border border-slate-800 rounded-2xl p-6 shadow-xl relative overflow-hidden">
-             {/* Glow effect */}
-             <div className="absolute -right-10 -top-10 w-32 h-32 bg-indigo-500 rounded-full blur-[60px] opacity-30 pointer-events-none"></div>
-
-             <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-4">Upcoming Deadline</h3>
-             
-             {upcomingMilestone ? (
-               <div>
-                 <div className="text-2xl font-black text-white tracking-tight mb-1">
-                   {upcomingMilestone.date}
-                 </div>
-                 <div className="text-sm font-semibold text-indigo-300 mb-6">
-                   {upcomingMilestone.title}
-                 </div>
-                 <button 
-                  onClick={() => setActiveTab('milestones')}
-                  className="w-full py-3 bg-white/10 hover:bg-white/20 text-white text-xs font-bold rounded-xl transition-colors backdrop-blur-sm border border-white/10"
-                 >
-                   View Timeline
-                 </button>
-               </div>
-             ) : (
-               <div className="text-sm text-emerald-400 font-bold py-6">
-                 All milestones completed!
-               </div>
-             )}
-          </div>
-
           {/* Guide Info */}
           <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
             <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-4">Project Guide</h3>

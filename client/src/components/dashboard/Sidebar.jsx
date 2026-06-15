@@ -29,14 +29,10 @@ export default function Sidebar({ activeTab, setActiveTab, isCollapsed, setIsCol
 
   const studentNavItems = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
-    { id: 'my-projects', label: 'My Projects', icon: FolderGit2 },
-    { id: 'upload-project', label: 'Upload Project', icon: UploadCloud },
-    { id: 'progress-updates', label: 'Progress Updates', icon: ClipboardList },
+    { id: 'progress-updates', label: 'Submit & Upload', icon: UploadCloud },
     { id: 'documents', label: 'Documents', icon: FileText },
-    { id: 'milestones', label: 'Milestones', icon: Milestone },
     { id: 'notifications', label: 'Notifications', icon: Bell },
     { id: 'feedback', label: 'Feedback', icon: MessageSquare },
-    { id: 'profile', label: 'Profile', icon: User },
   ];
 
   const guideNavItems = [
@@ -50,7 +46,6 @@ export default function Sidebar({ activeTab, setActiveTab, isCollapsed, setIsCol
     { id: 'meetings', label: 'Meetings', icon: Video },
     { id: 'notifications', label: 'Notifications', icon: Bell },
     { id: 'reports', label: 'Reports', icon: PieChart },
-    { id: 'profile', label: 'Profile', icon: User },
   ];
 
   const hodNavItems = [

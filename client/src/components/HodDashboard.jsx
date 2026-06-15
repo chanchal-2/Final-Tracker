@@ -31,6 +31,8 @@ export default function HodDashboard() {
       }
     } catch (err) {
       console.error('Error fetching HOD dashboard data:', err);
+      // Fallback to empty array on error (HOD views use simulated data)
+      setProjects([]);
     } finally {
       setLoading(false);
     }
