@@ -4,6 +4,14 @@ import { Search, Filter, MoreVertical, ArrowUpRight, CheckCircle, Clock, AlertTr
 export default function AssignedProjectsView({ projects, setActiveTab }) {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('All');
+  const [actionStates, setActionStates] = useState({});
+
+  const handleAction = (projId, action) => {
+    setActionStates(prev => ({ 
+      ...prev, 
+      [projId]: prev[projId] === action ? null : action 
+    }));
+  };
 
   const filteredProjects = projects.filter(p => {
     const matchesSearch = p.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
@@ -86,13 +94,44 @@ export default function AssignedProjectsView({ projects, setActiveTab }) {
                     </span>
                   </td>
                   <td className="p-4 text-right">
-                    <button 
-                      onClick={() => setActiveTab('reviews')}
-                      className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors inline-flex"
-                      title="View Details"
-                    >
-                      <ArrowUpRight className="w-4 h-4" />
-                    </button>
+                    <div className="flex items-center justify-end gap-2">
+                      {!actionStates[proj._id] ? (
+                        <>
+                          <button 
+                            onClick={() => handleAction(proj._id, 'hold')}
+                            className="px-3 py-1.5 text-[10px] font-black rounded-md uppercase tracking-wider transition-all bg-amber-50 text-amber-600 hover:bg-amber-100"
+                          >
+                            On Hold
+                          </button>
+                          <button 
+                            onClick={() => handleAction(proj._id, 'accept')}
+                            className="px-3 py-1.5 text-[10px] font-black rounded-md uppercase tracking-wider transition-all bg-emerald-50 text-emerald-600 hover:bg-emerald-100"
+                          >
+                            Accept
+                          </button>
+                          <button 
+                            onClick={() => handleAction(proj._id, 'reject')}
+                            className="px-3 py-1.5 text-[10px] font-black rounded-md uppercase tracking-wider transition-all bg-red-50 text-red-600 hover:bg-red-100"
+                          >
+                            Reject
+                          </button>
+                        </>
+                      ) : (
+                        <button 
+                          onClick={() => handleAction(proj._id, actionStates[proj._id])}
+                          className={`px-4 py-1.5 text-[10px] font-black rounded-md uppercase tracking-wider transition-all shadow-sm flex items-center gap-1.5 ${
+                            actionStates[proj._id] === 'hold' ? 'bg-amber-500 text-white shadow-amber-500/20' :
+                            actionStates[proj._id] === 'accept' ? 'bg-emerald-500 text-white shadow-emerald-500/20' :
+                            'bg-red-500 text-white shadow-red-500/20'
+                          }`}
+                          title="Click to change"
+                        >
+                          <CheckCircle className="w-3.5 h-3.5" />
+                          {actionStates[proj._id] === 'hold' ? 'On Hold' :
+                           actionStates[proj._id] === 'accept' ? 'Accepted' : 'Rejected'}
+                        </button>
+                      )}
+                    </div>
                   </td>
                 </tr>
               ))}

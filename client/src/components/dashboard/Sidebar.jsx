@@ -38,9 +38,7 @@ export default function Sidebar({ activeTab, setActiveTab, isCollapsed, setIsCol
   const guideNavItems = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { id: 'assigned-projects', label: 'Assigned Projects', icon: FolderGit2 },
-    { id: 'student-progress', label: 'Student Progress', icon: Activity },
     { id: 'approvals', label: 'Project Approvals', icon: CheckSquare },
-    { id: 'milestones', label: 'Milestones', icon: Milestone },
     { id: 'reviews', label: 'Reviews & Feedback', icon: CheckSquare },
     { id: 'documents', label: 'Documents', icon: FileText },
     { id: 'meetings', label: 'Meetings', icon: Video },
