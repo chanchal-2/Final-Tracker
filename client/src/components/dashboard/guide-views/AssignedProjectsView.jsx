@@ -1,16 +1,42 @@
 import React, { useState } from 'react';
 import { Search, Filter, MoreVertical, ArrowUpRight, CheckCircle, Clock, AlertTriangle } from 'lucide-react';
 
-export default function AssignedProjectsView({ projects, setActiveTab }) {
+export default function AssignedProjectsView({ projects, setProjects, setActiveTab }) {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('All');
-  const [actionStates, setActionStates] = useState({});
 
-  const handleAction = (projId, action) => {
-    setActionStates(prev => ({ 
-      ...prev, 
-      [projId]: prev[projId] === action ? null : action 
-    }));
+  const handleAction = async (projId, action) => {
+    const project = projects.find(p => p._id === projId);
+    let currentAction = null;
+    if (project.status === 'Approved') currentAction = 'accept';
+    if (project.status === 'Rejected') currentAction = 'reject';
+    if (project.status === 'On Hold') currentAction = 'hold';
+
+    const newAction = currentAction === action ? null : action;
+    const newStatusStr = newAction === 'accept' ? 'Approved' 
+                       : newAction === 'reject' ? 'Rejected' 
+                       : newAction === 'hold' ? 'On Hold' 
+                       : 'Pending';
+
+    // Update global state immediately for fast UI that persists across tabs
+    if (setProjects) {
+      setProjects(prevProjects => prevProjects.map(p => 
+        p._id === projId ? { ...p, status: newStatusStr } : p
+      ));
+    }
+
+    try {
+      await fetch(`/api/projects/${projId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        body: JSON.stringify({ status: newStatusStr })
+      });
+    } catch (err) {
+      console.error('Failed to update project status', err);
+    }
   };
 
   const filteredProjects = projects.filter(p => {
@@ -95,7 +121,7 @@ export default function AssignedProjectsView({ projects, setActiveTab }) {
                   </td>
                   <td className="p-4 text-right">
                     <div className="flex items-center justify-end gap-2">
-                      {!actionStates[proj._id] ? (
+                      {proj.status === 'Pending' ? (
                         <>
                           <button 
                             onClick={() => handleAction(proj._id, 'hold')}
@@ -118,17 +144,17 @@ export default function AssignedProjectsView({ projects, setActiveTab }) {
                         </>
                       ) : (
                         <button 
-                          onClick={() => handleAction(proj._id, actionStates[proj._id])}
+                          onClick={() => handleAction(proj._id, proj.status === 'Approved' ? 'accept' : proj.status === 'Rejected' ? 'reject' : 'hold')}
                           className={`px-4 py-1.5 text-[10px] font-black rounded-md uppercase tracking-wider transition-all shadow-sm flex items-center gap-1.5 ${
-                            actionStates[proj._id] === 'hold' ? 'bg-amber-500 text-white shadow-amber-500/20' :
-                            actionStates[proj._id] === 'accept' ? 'bg-emerald-500 text-white shadow-emerald-500/20' :
+                            proj.status === 'On Hold' ? 'bg-amber-500 text-white shadow-amber-500/20' :
+                            proj.status === 'Approved' ? 'bg-emerald-500 text-white shadow-emerald-500/20' :
                             'bg-red-500 text-white shadow-red-500/20'
                           }`}
                           title="Click to change"
                         >
                           <CheckCircle className="w-3.5 h-3.5" />
-                          {actionStates[proj._id] === 'hold' ? 'On Hold' :
-                           actionStates[proj._id] === 'accept' ? 'Accepted' : 'Rejected'}
+                          {proj.status === 'On Hold' ? 'On Hold' :
+                           proj.status === 'Approved' ? 'Accepted' : 'Rejected'}
                         </button>
                       )}
                     </div>

@@ -1,7 +1,24 @@
-import React from 'react';
-import { ShieldAlert, AlertCircle, Mail, Calendar, ExternalLink, Activity } from 'lucide-react';
+import React, { useState } from 'react';
+import { ShieldAlert, AlertCircle, Mail, Calendar, ExternalLink, Activity, CheckCircle2 } from 'lucide-react';
 
 export default function RiskMonitoringView() {
+  const [warningsSent, setWarningsSent] = useState({});
+  const [meetingsScheduled, setMeetingsScheduled] = useState({});
+
+  const handleSendWarning = (id) => {
+    setWarningsSent(prev => ({ ...prev, [id]: true }));
+    setTimeout(() => alert(`Warning email successfully sent to the Guide and Students of project ${id}.`), 100);
+  };
+
+  const handleSchedule = (id) => {
+    setMeetingsScheduled(prev => ({ ...prev, [id]: true }));
+    setTimeout(() => alert(`Intervention meeting scheduled for project ${id}. Calendar invites have been sent.`), 100);
+  };
+
+  const handleViewProject = (id) => {
+    alert(`Opening detailed project view for ${id}...`);
+  };
+
   const highRiskProjects = [
     { id: 'CSE-42', title: 'AI Driven Autonomous Swarm Drones', group: 'Team Alpha', guide: 'Dr. Ananya Rao', progress: 35, riskLevel: 'High', riskScore: 85, lastActivity: 'June 01, 2026', reason: 'No update in 14 days' },
     { id: 'CSE-18', title: 'Blockchain Based Land Registry', group: 'Team Block', guide: 'Prof. Rajesh Gowda', progress: 15, riskLevel: 'High', riskScore: 70, lastActivity: 'June 03, 2026', reason: 'Missed Milestone 2' },
@@ -13,8 +30,8 @@ export default function RiskMonitoringView() {
     <div className="max-w-6xl mx-auto space-y-6 animate-in fade-in duration-500">
       
       {/* Warning Header */}
-      <div className="relative overflow-hidden bg-gradient-to-r from-rose-950 via-rose-900 to-[#0B1220] rounded-[24px] p-8 shadow-xl border border-rose-800/50">
-        <div className="absolute top-0 right-0 w-64 h-64 bg-rose-500/20 rounded-full blur-[80px] pointer-events-none"></div>
+      <div className="relative overflow-hidden bg-gradient-to-r from-indigo-950 via-[#0B1220] to-[#0B1220] rounded-[24px] p-8 shadow-xl border border-indigo-900/50">
+        <div className="absolute top-0 right-0 w-64 h-64 bg-rose-500/10 rounded-full blur-[80px] pointer-events-none"></div>
         
         <div className="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
           <div className="max-w-2xl">
@@ -101,14 +118,37 @@ export default function RiskMonitoringView() {
             </div>
 
             <div className="flex items-center gap-3 mt-6 pt-6 border-t border-slate-100 pl-2">
-              <button className="flex-1 bg-white hover:bg-slate-50 text-slate-700 text-[10px] font-bold uppercase tracking-wider py-2.5 rounded-lg transition-colors border border-slate-200 flex items-center justify-center gap-2">
+              <button 
+                onClick={() => handleViewProject(p.id)}
+                className="flex-1 bg-white hover:bg-slate-50 text-slate-700 text-[10px] font-bold uppercase tracking-wider py-2.5 rounded-lg transition-colors border border-slate-200 flex items-center justify-center gap-2"
+              >
                 <ExternalLink className="w-3.5 h-3.5" /> View Project
               </button>
-              <button className="flex-1 bg-white hover:bg-indigo-50 text-indigo-600 text-[10px] font-bold uppercase tracking-wider py-2.5 rounded-lg transition-colors border border-slate-200 hover:border-indigo-200 flex items-center justify-center gap-2">
-                <Mail className="w-3.5 h-3.5" /> Send Warning
+              
+              <button 
+                onClick={() => handleSendWarning(p.id)}
+                disabled={warningsSent[p.id]}
+                className={`flex-1 text-[10px] font-bold uppercase tracking-wider py-2.5 rounded-lg transition-colors border flex items-center justify-center gap-2 ${
+                  warningsSent[p.id] 
+                    ? 'bg-emerald-50 border-emerald-200 text-emerald-600 cursor-default' 
+                    : 'bg-white hover:bg-indigo-50 text-indigo-600 border-slate-200 hover:border-indigo-200'
+                }`}
+              >
+                {warningsSent[p.id] ? <CheckCircle2 className="w-3.5 h-3.5" /> : <Mail className="w-3.5 h-3.5" />}
+                {warningsSent[p.id] ? 'Warning Sent' : 'Send Warning'}
               </button>
-              <button className="w-10 h-10 flex items-center justify-center bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-lg transition-colors border border-rose-200" title="Schedule Intervention">
-                <Calendar className="w-4 h-4" />
+              
+              <button 
+                onClick={() => handleSchedule(p.id)}
+                disabled={meetingsScheduled[p.id]}
+                className={`w-10 h-10 flex items-center justify-center rounded-lg transition-colors border ${
+                  meetingsScheduled[p.id]
+                    ? 'bg-emerald-50 border-emerald-200 text-emerald-600 cursor-default'
+                    : 'bg-rose-50 hover:bg-rose-100 text-rose-600 border-rose-200'
+                }`}
+                title={meetingsScheduled[p.id] ? "Meeting Scheduled" : "Schedule Intervention"}
+              >
+                {meetingsScheduled[p.id] ? <CheckCircle2 className="w-4 h-4" /> : <Calendar className="w-4 h-4" />}
               </button>
             </div>
             

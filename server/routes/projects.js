@@ -144,7 +144,22 @@ router.put('/:id', protect, authorize('hod', 'guide'), async (req, res) => {
         return res.status(404).json({ message: 'Project not found' });
       }
 
-      if (status) project.status = status;
+      if (status && status !== project.status) {
+        project.status = status;
+        
+        // Notify the student about the status change
+        const student = await User.findOne({ projectId: project._id, role: 'student' });
+        if (student) {
+          await Notification.create({
+            title: 'Project Status Updated',
+            message: `Your project status has been updated to "${status}".`,
+            type: status === 'Approved' ? 'success' : status === 'On Hold' ? 'warning' : 'error',
+            targetRoles: [],
+            targetUsers: [student._id],
+            projectId: project._id
+          });
+        }
+      }
       if (progress !== undefined) project.progress = progress;
       if (milestones) project.milestones = milestones;
       if (feedback) project.feedback = feedback;
@@ -158,7 +173,25 @@ router.put('/:id', protect, authorize('hod', 'guide'), async (req, res) => {
         return res.status(404).json({ message: 'Project not found in fallback database' });
       }
 
-      if (status) project.status = status;
+      if (status && status !== project.status) {
+        project.status = status;
+        
+        const student = dbStore.users.find(u => u.projectId === project._id && u.role === 'student');
+        if (student) {
+          if (!dbStore.notifications) dbStore.notifications = [];
+          dbStore.notifications.push({
+            _id: 'notif_' + Math.random().toString(36).substr(2, 9),
+            title: 'Project Status Updated',
+            message: `Your project status has been updated to "${status}".`,
+            type: status === 'Approved' ? 'success' : status === 'On Hold' ? 'warning' : 'error',
+            targetRoles: [],
+            targetUsers: [student._id.toString()],
+            projectId: project._id,
+            readBy: [],
+            createdAt: new Date()
+          });
+        }
+      }
       if (progress !== undefined) project.progress = progress;
       if (milestones) project.milestones = milestones;
       if (feedback) project.feedback = feedback;

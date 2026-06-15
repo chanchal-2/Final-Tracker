@@ -47,8 +47,7 @@ export default function Sidebar({ activeTab, setActiveTab, isCollapsed, setIsCol
   ];
 
   const hodNavItems = [
-    { id: 'dashboard', label: 'Dashboard Overview', icon: LayoutDashboard },
-    { id: 'approvals', label: 'Project Approvals', icon: CheckSquare },
+    { id: 'dashboard', label: 'Overview', icon: LayoutDashboard },
     { id: 'guides', label: 'Guide Management', icon: Users },
     { id: 'risk', label: 'Risk Monitoring', icon: AlertTriangle },
     { id: 'announcements', label: 'Announcements & Deadlines', icon: Bell },

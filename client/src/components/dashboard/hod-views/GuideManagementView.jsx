@@ -1,15 +1,24 @@
-import React from 'react';
-import { Users, Star, Clock, FileCheck, FileClock, RefreshCw } from 'lucide-react';
+import React, { useState } from 'react';
+import { Users, Star, Clock, FileCheck, FileClock, RefreshCw, X, Send, Trash2 } from 'lucide-react';
 
 export default function GuideManagementView() {
-  // Mock data as requested since backend doesn't currently track guide performance metrics natively
-  const guides = [
+  const [selectedGuide, setSelectedGuide] = useState(null);
+  const [feedbackText, setFeedbackText] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Add Guide Modal State
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [newGuideName, setNewGuideName] = useState('');
+  const [newGuideCapacity, setNewGuideCapacity] = useState('10');
+
+  // Use state so we can add new guides dynamically
+  const [guides, setGuides] = useState([
     { id: 1, name: 'Dr. Ananya Rao', groups: 8, maxGroups: 10, completedReviews: 45, pendingReviews: 3, avgResponse: '1.2 days', rating: 4.8 },
     { id: 2, name: 'Prof. Rajesh Gowda', groups: 12, maxGroups: 12, completedReviews: 60, pendingReviews: 14, avgResponse: '3.5 days', rating: 3.9 },
     { id: 3, name: 'Dr. Srinivas Murthy', groups: 5, maxGroups: 10, completedReviews: 28, pendingReviews: 1, avgResponse: '0.8 days', rating: 4.9 },
     { id: 4, name: 'Dr. Kavitha S.', groups: 9, maxGroups: 10, completedReviews: 35, pendingReviews: 5, avgResponse: '2.1 days', rating: 4.4 },
     { id: 5, name: 'Prof. Vikram Shetty', groups: 7, maxGroups: 8, completedReviews: 20, pendingReviews: 8, avgResponse: '4.0 days', rating: 3.5 }
-  ];
+  ]);
 
   return (
     <div className="space-y-6 animate-in fade-in duration-500">
@@ -18,7 +27,10 @@ export default function GuideManagementView() {
           <h2 className="text-2xl font-black text-[#0B1220] tracking-tight">Guide Management</h2>
           <p className="text-sm text-slate-500 font-semibold mt-1">Monitor faculty workload, review performance, and reassign projects.</p>
         </div>
-        <button className="flex items-center gap-2 bg-[#0B1220] text-white px-5 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider hover:bg-indigo-600 transition-colors shadow-sm">
+        <button 
+          onClick={() => setShowAddModal(true)}
+          className="flex items-center gap-2 bg-[#0B1220] text-white px-5 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider hover:bg-indigo-600 transition-colors shadow-sm"
+        >
           <Users className="w-4 h-4" />
           Add New Guide
         </button>
@@ -33,9 +45,7 @@ export default function GuideManagementView() {
                 <th className="py-4 px-6 w-48">Workload (Assigned Groups)</th>
                 <th className="py-4 px-6 text-center">Completed Reviews</th>
                 <th className="py-4 px-6 text-center">Pending Reviews</th>
-                <th className="py-4 px-6">Avg Response Time</th>
-                <th className="py-4 px-6">Performance & Rank</th>
-                <th className="py-4 px-6 text-right">Actions</th>
+                <th className="py-4 px-6 text-right">Feedback</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 text-sm">
@@ -55,7 +65,7 @@ export default function GuideManagementView() {
                         <div>
                           <span className="font-bold text-[#0B1220] block flex items-center gap-2">
                             {guide.name}
-                            {guide.rating > 4.5 && <span className="bg-amber-100 text-amber-700 text-[8px] uppercase tracking-widest px-1.5 py-0.5 rounded font-black border border-amber-200">Top Rated</span>}
+
                           </span>
                           <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{guide.groups * 4} Students Supervised</span>
                         </div>
@@ -92,37 +102,24 @@ export default function GuideManagementView() {
                       </div>
                     </td>
 
-                    <td className="py-4 px-6">
-                      <div className="flex items-center gap-2">
-                        <Clock className={`w-4 h-4 ${parseFloat(guide.avgResponse) > 3 ? 'text-rose-400' : 'text-slate-400'}`} />
-                        <span className={`font-semibold ${parseFloat(guide.avgResponse) > 3 ? 'text-rose-600' : 'text-slate-600'}`}>
-                          {guide.avgResponse}
-                        </span>
-                      </div>
-                    </td>
-
-                    <td className="py-4 px-6">
-                      <div className="flex flex-col">
-                        <div className="flex items-center gap-1 mb-1">
-                          {[1, 2, 3, 4, 5].map(star => (
-                            <Star 
-                              key={star} 
-                              className={`w-4 h-4 ${star <= Math.floor(guide.rating) ? 'text-amber-400 fill-amber-400' : 'text-slate-200 fill-slate-200'}`} 
-                            />
-                          ))}
-                          <span className="font-bold text-[#0B1220] ml-1">{guide.rating}</span>
-                        </div>
-                        <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Dept Rank: #{idx + 1}</span>
-                      </div>
-                    </td>
-
                     <td className="py-4 px-6 text-right">
                       <div className="flex items-center justify-end gap-2">
-                        <button className="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider bg-slate-50 hover:bg-slate-100 text-slate-600 border border-slate-200 px-2 py-1.5 rounded-lg transition-colors">
-                          Details
+                        <button 
+                          onClick={() => setSelectedGuide(guide)}
+                          className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 px-4 py-2 rounded-lg transition-colors shadow-sm"
+                        >
+                          Give Feedback
                         </button>
-                        <button className="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider bg-slate-50 hover:bg-indigo-50 text-slate-600 hover:text-indigo-600 border border-slate-200 hover:border-indigo-200 px-2 py-1.5 rounded-lg transition-colors" title="Reassign Groups">
-                          <RefreshCw className="w-3.5 h-3.5" />
+                        <button 
+                          onClick={() => {
+                            if(window.confirm(`Are you sure you want to remove ${guide.name}?`)) {
+                              setGuides(guides.filter(g => g.id !== guide.id));
+                            }
+                          }}
+                          className="opacity-0 group-hover:opacity-100 inline-flex items-center justify-center bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 p-2 rounded-lg transition-all shadow-sm"
+                          title="Remove Guide"
+                        >
+                          <Trash2 className="w-4 h-4" />
                         </button>
                       </div>
                     </td>
@@ -133,6 +130,140 @@ export default function GuideManagementView() {
           </table>
         </div>
       </div>
+
+      {/* Feedback Modal */}
+      {selectedGuide && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#0B1220]/60 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden flex flex-col border border-slate-200 animate-in zoom-in-95 duration-200">
+            <div className="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+              <h3 className="text-lg font-black text-slate-800 tracking-tight">Provide Feedback</h3>
+              <button 
+                onClick={() => { setSelectedGuide(null); setFeedbackText(''); }}
+                className="text-slate-400 hover:text-rose-500 transition-colors p-1 rounded-md hover:bg-rose-50"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            
+            <div className="p-6">
+              <p className="text-sm font-semibold text-slate-600 mb-4">
+                Sending feedback to <span className="font-black text-indigo-600">{selectedGuide.name}</span>
+              </p>
+              
+              <textarea
+                value={feedbackText}
+                onChange={(e) => setFeedbackText(e.target.value)}
+                placeholder="Write your feedback regarding workload, student reviews, or overall performance here..."
+                className="w-full h-32 p-4 text-sm font-medium text-slate-700 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/10 transition-all resize-none"
+              ></textarea>
+            </div>
+            
+            <div className="px-6 py-4 border-t border-slate-100 bg-slate-50 flex justify-end gap-3">
+              <button 
+                onClick={() => { setSelectedGuide(null); setFeedbackText(''); }}
+                className="px-5 py-2.5 text-xs font-bold text-slate-600 uppercase tracking-wider hover:bg-slate-200 rounded-xl transition-colors"
+              >
+                Cancel
+              </button>
+              <button 
+                onClick={() => {
+                  if (!feedbackText.trim()) return alert('Please write some feedback first.');
+                  setIsSubmitting(true);
+                  setTimeout(() => {
+                    setIsSubmitting(false);
+                    setSelectedGuide(null);
+                    setFeedbackText('');
+                    alert(`Feedback successfully sent to ${selectedGuide.name}!`);
+                  }, 600);
+                }}
+                disabled={isSubmitting}
+                className={`flex items-center gap-2 px-6 py-2.5 text-xs font-bold text-white uppercase tracking-wider rounded-xl transition-all shadow-md ${
+                  isSubmitting ? 'bg-indigo-400 cursor-wait' : 'bg-indigo-600 hover:bg-indigo-500 shadow-indigo-500/25'
+                }`}
+              >
+                {isSubmitting ? 'Sending...' : (
+                  <>
+                    <Send className="w-4 h-4" /> Send Feedback
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Add New Guide Modal */}
+      {showAddModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#0B1220]/60 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden flex flex-col border border-slate-200 animate-in zoom-in-95 duration-200">
+            <div className="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+              <h3 className="text-lg font-black text-slate-800 tracking-tight">Add New Guide</h3>
+              <button 
+                onClick={() => { setShowAddModal(false); setNewGuideName(''); setNewGuideCapacity('10'); }}
+                className="text-slate-400 hover:text-rose-500 transition-colors p-1 rounded-md hover:bg-rose-50"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            
+            <div className="p-6 space-y-4">
+              <div>
+                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Guide Name</label>
+                <input
+                  type="text"
+                  value={newGuideName}
+                  onChange={(e) => setNewGuideName(e.target.value)}
+                  placeholder="e.g. Dr. Jane Smith"
+                  className="w-full px-4 py-2.5 text-sm font-semibold text-slate-700 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/10 transition-all"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Max Group Capacity</label>
+                <input
+                  type="number"
+                  min="1"
+                  max="20"
+                  value={newGuideCapacity}
+                  onChange={(e) => setNewGuideCapacity(e.target.value)}
+                  className="w-full px-4 py-2.5 text-sm font-semibold text-slate-700 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/10 transition-all"
+                />
+              </div>
+            </div>
+            
+            <div className="px-6 py-4 border-t border-slate-100 bg-slate-50 flex justify-end gap-3">
+              <button 
+                onClick={() => { setShowAddModal(false); setNewGuideName(''); setNewGuideCapacity('10'); }}
+                className="px-5 py-2.5 text-xs font-bold text-slate-600 uppercase tracking-wider hover:bg-slate-200 rounded-xl transition-colors"
+              >
+                Cancel
+              </button>
+              <button 
+                onClick={() => {
+                  if (!newGuideName.trim()) return alert('Please enter a guide name.');
+                  const newGuide = {
+                    id: Date.now(),
+                    name: newGuideName,
+                    groups: 0,
+                    maxGroups: parseInt(newGuideCapacity) || 10,
+                    completedReviews: 0,
+                    pendingReviews: 0,
+                    avgResponse: '0.0 days',
+                    rating: 0.0
+                  };
+                  setGuides([...guides, newGuide]);
+                  setShowAddModal(false);
+                  setNewGuideName('');
+                  setNewGuideCapacity('10');
+                }}
+                className="flex items-center gap-2 px-6 py-2.5 text-xs font-bold text-white uppercase tracking-wider bg-indigo-600 hover:bg-indigo-500 rounded-xl transition-all shadow-md shadow-indigo-500/25"
+              >
+                Add Guide
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

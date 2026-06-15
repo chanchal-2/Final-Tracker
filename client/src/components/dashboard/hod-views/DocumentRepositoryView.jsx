@@ -85,44 +85,6 @@ export default function DocumentRepositoryView() {
   return (
     <div className="max-w-7xl mx-auto space-y-6 animate-in fade-in duration-500 pb-10">
       
-      {/* Header Section */}
-      <div className="relative overflow-hidden bg-gradient-to-r from-indigo-950 via-[#0B1220] to-[#0B1220] rounded-[24px] p-8 shadow-xl border border-indigo-900/50">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-indigo-600/10 rounded-full blur-[100px] pointer-events-none"></div>
-        <div className="absolute bottom-0 left-0 w-64 h-64 bg-blue-600/10 rounded-full blur-[80px] pointer-events-none"></div>
-        
-        <div className="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-8">
-          <div>
-            <h1 className="text-3xl font-black text-white tracking-tight flex items-center gap-3 mb-2">
-              <FolderArchive className="w-8 h-8 text-indigo-400" />
-              Project Document Repository
-            </h1>
-            <p className="text-sm text-indigo-200/70 font-medium">
-              Access, search, and manage all project documents across the department.
-            </p>
-          </div>
-          <button onClick={() => alert('Compiling ZIP archive for download...')} className="bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs uppercase tracking-wider px-6 py-3 rounded-xl transition-all shadow-lg shadow-indigo-500/25 flex items-center gap-2">
-            <Download className="w-4 h-4" /> Export Archive
-          </button>
-        </div>
-
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 relative z-10">
-          {stats.map((s, idx) => {
-            const Icon = s.icon;
-            return (
-              <div key={idx} onClick={() => alert(`Filtering by: ${s.label}`)} className="bg-white/5 border border-white/10 rounded-2xl p-4 hover:bg-white/10 transition-colors group cursor-pointer">
-                <div className={`w-8 h-8 rounded-lg ${s.bg} ${s.color} border ${s.border} flex items-center justify-center mb-3 group-hover:scale-110 transition-transform`}>
-                  <Icon className="w-4 h-4" />
-                </div>
-                <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{s.label}</h4>
-                <div className="flex items-end justify-between mt-1">
-                  <span className="text-xl font-black text-white">{s.count}</span>
-                  <span className="text-[10px] font-bold text-emerald-400 flex items-center">+12%</span>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         
