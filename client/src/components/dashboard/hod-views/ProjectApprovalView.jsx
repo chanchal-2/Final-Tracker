@@ -13,7 +13,7 @@ export default function ProjectApprovalView({ projects, setProjects, token }) {
       title: 'Quantum Key Distribution Simulator',
       domain: 'Cyber Security',
       abstract: 'This project simulates quantum key distribution protocols (BB84, E91) over noisy channels to evaluate error rates and security bounds. It includes a visualization dashboard for interception attempts.',
-      team: ['Alex P.', 'Sarah M.', 'David W.', 'Emma R.'],
+      team: ['Alex P.'],
       tech: ['Python', 'Qiskit', 'React', 'Node.js'],
       submittedDate: 'June 10, 2026',
       guide: 'Dr. Srinivas',
@@ -25,7 +25,7 @@ export default function ProjectApprovalView({ projects, setProjects, token }) {
       title: 'Decentralized Academic Credential Verifier',
       domain: 'Blockchain',
       abstract: 'A web3 application designed to issue, store, and verify university degrees on the Ethereum blockchain, eliminating credential fraud and reducing verification times for employers.',
-      team: ['John Doe', 'Jane Smith', 'Alice J.'],
+      team: ['Jane Smith'],
       tech: ['Solidity', 'Ethereum', 'Next.js', 'IPFS'],
       submittedDate: 'June 12, 2026',
       guide: 'Prof. Rajesh Gowda',
@@ -37,7 +37,7 @@ export default function ProjectApprovalView({ projects, setProjects, token }) {
       title: 'AI-Powered Traffic Light Optimization',
       domain: 'Artificial Intelligence',
       abstract: 'Utilizing computer vision and reinforcement learning to dynamically adjust traffic light timings based on real-time vehicle density, aiming to reduce average waiting times by 30%.',
-      team: ['Michael B.', 'Chris T.', 'Jessica L.'],
+      team: ['Michael B.'],
       tech: ['TensorFlow', 'OpenCV', 'Python', 'React'],
       submittedDate: 'June 13, 2026',
       status: 'pending'
@@ -54,7 +54,7 @@ export default function ProjectApprovalView({ projects, setProjects, token }) {
     return {
       domain: project.domain || 'Computer Science',
       abstract: project.abstract || 'Abstract Preview: This project focuses on solving complex problems within the specified domain by utilizing advanced architectures and algorithms. It aims to streamline operations and provide an efficient, scalable solution.',
-      team: Array.isArray(project.team) ? project.team : ['Student A', 'Student B', 'Student C'],
+      team: Array.isArray(project.team) ? project.team : ['Student A'],
       tech: Array.isArray(project.tech) ? project.tech : ['React', 'Node.js', 'MongoDB'],
       guide: project.guide || 'Not Assigned Yet',
       date: project.submittedDate || 'Recently'
@@ -133,7 +133,7 @@ export default function ProjectApprovalView({ projects, setProjects, token }) {
                     <div className="flex items-start gap-2">
                       <Users className="w-4 h-4 text-slate-400 mt-0.5" />
                       <div>
-                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Team Members</p>
+                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Student</p>
                         <p className="text-xs font-semibold text-slate-700">{meta.team.join(', ')}</p>
                       </div>
                     </div>
@@ -237,7 +237,7 @@ export default function ProjectApprovalView({ projects, setProjects, token }) {
                   </section>
                   
                   <section>
-                    <h2 className="text-xl font-bold text-slate-800 border-b border-slate-200 pb-2 mb-4">2. Team Details</h2>
+                    <h2 className="text-xl font-bold text-slate-800 border-b border-slate-200 pb-2 mb-4">2. Student Details</h2>
                     <ul className="list-disc list-inside text-slate-600 leading-relaxed space-y-1">
                       {getDummyMeta(viewingPdf).team.map((t, i) => (
                         <li key={i}>{t}</li>

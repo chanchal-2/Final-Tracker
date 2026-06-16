@@ -18,19 +18,19 @@ import ProjectApprovalView from './dashboard/hod-views/ProjectApprovalView';
 // ── Mock data defined at module level so it's always stable ──────────────────
 const MOCK_PROJECTS = [
   {
-    _id: 'mock-proj-001',
+    _id: 'proj_cse_04',
     projectId: 'CSE-2026-001',
     title: 'AI-Powered Capstone Project Tracker',
     description: 'A full-stack web application for managing final year capstone projects with real-time tracking, guide feedback, and milestone management.',
     status: 'Approved',
     progress: 72,
     student: 'Naveen Malviya',
-    team: 'Naveen Malviya',
+    team: 'Naveen Malviya, Priya Patel, Rahul Kumar',
     department: 'Computer Science',
-    guide: 'Dr. S. Sharma',
+    guide: 'Dr. Ananya Rao',
     documents: [
-      { title: 'Project Proposal', type: 'Report', uploadDate: '2026-01-15' },
-      { title: 'System Architecture Diagram', type: 'Report', uploadDate: '2026-03-05' },
+      { title: 'Project Proposal', type: 'Report', url: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf', uploadDate: '2026-01-15' },
+      { title: 'System Architecture Diagram', type: 'Report', url: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf', uploadDate: '2026-03-05' },
     ],
     milestones: [
       { title: 'Project Proposal Submission', date: 'Jan 15, 2026', status: 'done' },
@@ -39,7 +39,7 @@ const MOCK_PROJECTS = [
       { title: 'Prototype Development', date: 'Apr 20, 2026', status: 'active' },
     ],
     feedback: [
-      { message: 'Great progress! Please add more detail to the API documentation section.', guideName: 'Dr. S. Sharma', date: '2026-03-10' }
+      { _id: 'f1', message: 'Good progress on the system design. Please add more detail to the API section.', createdAt: new Date('2026-03-10'), guide: 'Dr. Ananya Rao' }
     ],
     logs: [
       { log: 'Completed authentication module and connected to MongoDB. Starting UI polish.', createdAt: '2026-04-01' }
@@ -55,9 +55,9 @@ const MOCK_PROJECTS = [
     student: 'Ananya Singh',
     team: 'Ananya Singh',
     department: 'Computer Science',
-    guide: 'Dr. S. Sharma',
+    guide: 'Dr. Ananya Rao',
     documents: [
-      { title: 'BLE Research Paper', type: 'Report', uploadDate: '2026-02-10' },
+      { title: 'BLE Research Paper', type: 'Report', url: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf', uploadDate: '2026-02-10' },
     ],
     milestones: [
       { title: 'Hardware Setup & BLE Config', date: 'Feb 01, 2026', status: 'done' },
@@ -79,7 +79,7 @@ const MOCK_PROJECTS = [
     student: 'Rohan Mehta',
     team: 'Rohan Mehta',
     department: 'Computer Science',
-    guide: 'Dr. S. Sharma',
+    guide: 'Dr. Ananya Rao',
     documents: [],
     milestones: [
       { title: 'Smart Contract Draft', date: 'Mar 01, 2026', status: 'done' },
@@ -87,7 +87,7 @@ const MOCK_PROJECTS = [
       { title: 'Frontend & Testing', date: 'May 20, 2026', status: 'locked' },
     ],
     feedback: [
-      { message: 'Submission is behind schedule. Please share an updated timeline by this week.', guideName: 'Dr. S. Sharma', date: '2026-04-05' }
+      { message: 'Submission is behind schedule. Please share an updated timeline by this week.', guideName: 'Dr. Ananya Rao', date: '2026-04-05' }
     ],
     logs: [],
   },
@@ -101,9 +101,9 @@ const MOCK_PROJECTS = [
     student: 'Meera Joshi',
     team: 'Meera Joshi',
     department: 'Computer Science',
-    guide: 'Dr. S. Sharma',
+    guide: 'Dr. Ananya Rao',
     documents: [
-      { title: 'Initial Proposal Document', type: 'Report', uploadDate: '2026-01-20' },
+      { title: 'Initial Proposal Document', type: 'Report', url: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf', uploadDate: '2026-01-20' },
     ],
     milestones: [
       { title: 'Dataset Collection & Preprocessing', date: 'Feb 20, 2026', status: 'done' },
@@ -125,7 +125,7 @@ const MOCK_PROJECTS = [
     student: 'Deepak Verma',
     team: 'Deepak Verma',
     department: 'Computer Science',
-    guide: 'Dr. S. Sharma',
+    guide: 'Dr. Ananya Rao',
     documents: [],
     milestones: [
       { title: 'UI/UX Design Mockups', date: 'Mar 10, 2026', status: 'active' },
@@ -133,7 +133,7 @@ const MOCK_PROJECTS = [
       { title: 'ML Recommendation Engine', date: 'Jun 10, 2026', status: 'locked' },
     ],
     feedback: [
-      { message: 'Progress is critically behind schedule. Immediate corrective action is required.', guideName: 'Dr. S. Sharma', date: '2026-04-10' }
+      { message: 'Progress is critically behind schedule. Immediate corrective action is required.', guideName: 'Dr. Ananya Rao', date: '2026-04-10' }
     ],
     logs: [],
   },

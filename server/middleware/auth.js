@@ -16,10 +16,19 @@ export const protect = async (req, res, next) => {
       // --- BYPASS MONGODB FOR UI TESTING ---
       if (token.startsWith('mock-token-')) {
         const role = token.split('-')[2]; // e.g. 'mock-token-hod' -> 'hod'
+        
+        let mockId = `mock-${role}-123`;
+        let mockName = `Mock ${role.charAt(0).toUpperCase() + role.slice(1)}`;
+        
+        if (role === 'guide') {
+          mockId = 'user_guide_rao';
+          mockName = 'Dr. Ananya Rao';
+        }
+
         req.user = {
-          _id: `mock-${role}-123`,
-          name: `Mock ${role.toUpperCase()}`,
-          email: `${role}@projecttracker.edu`,
+          _id: mockId,
+          name: mockName,
+          email: `${role}@tracker.edu`,
           role: role,
           department: 'Computer Science'
         };

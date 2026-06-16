@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Users, Star, Clock, FileCheck, FileClock, RefreshCw, X, Send, Trash2 } from 'lucide-react';
 
-export default function GuideManagementView() {
+export default function GuideManagementView({ token }) {
   const [selectedGuide, setSelectedGuide] = useState(null);
   const [feedbackText, setFeedbackText] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -13,11 +13,11 @@ export default function GuideManagementView() {
 
   // Use state so we can add new guides dynamically
   const [guides, setGuides] = useState([
-    { id: 1, name: 'Dr. Ananya Rao', groups: 8, maxGroups: 10, completedReviews: 45, pendingReviews: 3, avgResponse: '1.2 days', rating: 4.8 },
-    { id: 2, name: 'Prof. Rajesh Gowda', groups: 12, maxGroups: 12, completedReviews: 60, pendingReviews: 14, avgResponse: '3.5 days', rating: 3.9 },
-    { id: 3, name: 'Dr. Srinivas Murthy', groups: 5, maxGroups: 10, completedReviews: 28, pendingReviews: 1, avgResponse: '0.8 days', rating: 4.9 },
-    { id: 4, name: 'Dr. Kavitha S.', groups: 9, maxGroups: 10, completedReviews: 35, pendingReviews: 5, avgResponse: '2.1 days', rating: 4.4 },
-    { id: 5, name: 'Prof. Vikram Shetty', groups: 7, maxGroups: 8, completedReviews: 20, pendingReviews: 8, avgResponse: '4.0 days', rating: 3.5 }
+    { id: 1, userId: 'user_guide_rao', name: 'Dr. Ananya Rao', groups: 8, maxGroups: 10, completedReviews: 45, pendingReviews: 3, avgResponse: '1.2 days', rating: 4.8 },
+    { id: 2, userId: 'user_guide_gowda', name: 'Prof. Rajesh Gowda', groups: 12, maxGroups: 12, completedReviews: 60, pendingReviews: 14, avgResponse: '3.5 days', rating: 3.9 },
+    { id: 3, userId: 'user_guide_murthy', name: 'Dr. Srinivas Murthy', groups: 5, maxGroups: 10, completedReviews: 28, pendingReviews: 1, avgResponse: '0.8 days', rating: 4.9 },
+    { id: 4, userId: 'mock-guide-123', name: 'Dr. Kavitha S.', groups: 9, maxGroups: 10, completedReviews: 35, pendingReviews: 5, avgResponse: '2.1 days', rating: 4.4 },
+    { id: 5, userId: 'mock-guide-123', name: 'Prof. Vikram Shetty', groups: 7, maxGroups: 8, completedReviews: 20, pendingReviews: 8, avgResponse: '4.0 days', rating: 3.5 }
   ]);
 
   return (
@@ -166,15 +166,34 @@ export default function GuideManagementView() {
                 Cancel
               </button>
               <button 
-                onClick={() => {
+                onClick={async () => {
                   if (!feedbackText.trim()) return alert('Please write some feedback first.');
                   setIsSubmitting(true);
-                  setTimeout(() => {
+                  try {
+                    await fetch('/api/notifications', {
+                      method: 'POST',
+                      headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${token}`
+                      },
+                      body: JSON.stringify({
+                        title: 'New Feedback from HOD',
+                        message: `HOD left feedback regarding your performance: "${feedbackText}"`,
+                        type: 'info',
+                        targetRoles: [],
+                        targetUsers: [selectedGuide.userId]
+                      })
+                    });
                     setIsSubmitting(false);
+                    const guideName = selectedGuide.name;
                     setSelectedGuide(null);
                     setFeedbackText('');
-                    alert(`Feedback successfully sent to ${selectedGuide.name}!`);
-                  }, 600);
+                    alert(`Feedback successfully sent to ${guideName}!`);
+                  } catch (err) {
+                    console.error('Failed to send feedback', err);
+                    setIsSubmitting(false);
+                    alert('Error sending feedback.');
+                  }
                 }}
                 disabled={isSubmitting}
                 className={`flex items-center gap-2 px-6 py-2.5 text-xs font-bold text-white uppercase tracking-wider rounded-xl transition-all shadow-md ${

@@ -66,14 +66,17 @@ export default function ReportsView({ projects }) {
       ].join(',');
     });
 
-    const csvContent = "data:text/csv;charset=utf-8," + [headers.join(','), ...rows].join('\n');
-    const encodedUri = encodeURI(csvContent);
+    const csvContent = [headers.join(','), ...rows].join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    
     const link = document.createElement("a");
-    link.setAttribute("href", encodedUri);
+    link.setAttribute("href", url);
     link.setAttribute("download", `ProjectTracker_Report_${new Date().toISOString().split('T')[0]}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+    URL.revokeObjectURL(url);
   };
 
   return (
@@ -196,14 +199,10 @@ export default function ReportsView({ projects }) {
                     <th className="p-4">Project Title</th>
                     <th className="p-4">Status</th>
                     <th className="p-4">Progress</th>
-                    <th className="p-4 text-right">Latest Grade</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-50">
                   {projects.map(proj => {
-                    const completedList = (proj.milestones || []).filter(m => m.status === 'done');
-                    const latestGrade = completedList.length > 0 ? completedList[completedList.length - 1].grade : '-';
-                    
                     return (
                       <tr key={proj._id} className="hover:bg-slate-50/50 transition-colors">
                         <td className="p-4">
@@ -232,9 +231,6 @@ export default function ReportsView({ projects }) {
                             </div>
                             <span className="text-[10px] font-bold text-slate-600">{proj.progress}%</span>
                           </div>
-                        </td>
-                        <td className="p-4 text-right">
-                          <span className="text-xs font-black text-slate-800">{latestGrade}</span>
                         </td>
                       </tr>
                     );

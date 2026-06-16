@@ -141,6 +141,62 @@ const seedInMemoryData = async () => {
         { title: 'Weekly Progress Review 02', date: 'June 15, 2026', status: 'active', grade: 'TBD' },
         { title: 'Mid-term Assessment', date: 'June 28, 2026', status: 'locked', grade: '' }
       ]
+    },
+    // ---- Mock Projects for GuideDashboard testing ----
+    {
+      _id: 'proj_cse_04',
+      projectId: 'CSE-2026-001',
+      title: 'AI-Powered Capstone Project Tracker',
+      guide: 'Dr. Ananya Rao',
+      guideId: 'user_guide_rao',
+      team: 'Naveen Malviya',
+      status: 'Approved',
+      progress: 72,
+      milestones: []
+    },
+    {
+      _id: 'mock-proj-002',
+      projectId: 'CSE-2026-002',
+      title: 'Smart Campus Navigation System',
+      guide: 'Dr. Ananya Rao',
+      guideId: 'user_guide_rao',
+      team: 'Ananya Singh',
+      status: 'Approved',
+      progress: 58,
+      milestones: []
+    },
+    {
+      _id: 'mock-proj-003',
+      projectId: 'CSE-2026-003',
+      title: 'Blockchain-Based Certificate Verification',
+      guide: 'Dr. Ananya Rao',
+      guideId: 'user_guide_rao',
+      team: 'Rohan Mehta',
+      status: 'Delayed',
+      progress: 35,
+      milestones: []
+    },
+    {
+      _id: 'mock-proj-004',
+      projectId: 'CSE-2026-004',
+      title: 'Predictive Health Monitoring Dashboard',
+      guide: 'Dr. Ananya Rao',
+      guideId: 'user_guide_rao',
+      team: 'Meera Joshi',
+      status: 'Pending',
+      progress: 20,
+      milestones: []
+    },
+    {
+      _id: 'mock-proj-005',
+      projectId: 'CSE-2026-005',
+      title: 'E-Learning Platform with Adaptive Quizzes',
+      guide: 'Dr. Ananya Rao',
+      guideId: 'user_guide_rao',
+      team: 'Deepak Verma',
+      status: 'At Risk',
+      progress: 15,
+      milestones: []
     }
   ];
 

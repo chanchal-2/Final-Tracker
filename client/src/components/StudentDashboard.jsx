@@ -23,12 +23,12 @@ export default function StudentDashboard() {
 
   // Mock project data for UI testing (when MongoDB is offline)
   const mockProject = {
-    _id: 'mock-proj-001',
+    _id: 'proj_cse_04',
     title: 'AI-Powered Capstone Project Tracker',
     description: 'A full-stack web application for managing final year capstone projects with real-time tracking, guide feedback, and milestone management.',
     status: 'In Progress',
     progress: 72,
-    guide: 'Dr. S. Sharma',
+    guide: 'Dr. Ananya Rao',
     department: 'Computer Science',
     teamMembers: ['Naveen Malviya', 'Priya Patel', 'Rahul Kumar'],
     milestones: [
@@ -40,15 +40,15 @@ export default function StudentDashboard() {
       { title: 'Final Viva & Submission', date: 'Jun 25, 2026', status: 'locked' },
     ],
     documents: [
-      { title: 'Project Proposal', type: 'PDF', url: '#', uploadDate: new Date('2026-01-15') },
-      { title: 'System Architecture Diagram', type: 'DOC', url: '#', uploadDate: new Date('2026-03-05') },
+      { title: 'Project Proposal', type: 'PDF', url: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf', uploadDate: new Date('2026-01-15') },
+      { title: 'System Architecture Diagram', type: 'DOC', url: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf', uploadDate: new Date('2026-03-05') },
     ],
     notifications: [
       { _id: 'n1', title: 'Milestone Due Soon', message: 'Prototype Development is due in 5 days.', isRead: false, type: 'warning' },
-      { _id: 'n2', title: 'Guide Feedback Available', message: 'Dr. S. Sharma has reviewed your system design document.', isRead: false, type: 'info' },
+      { _id: 'n2', title: 'Guide Feedback Available', message: 'Dr. Ananya Rao has reviewed your system design document.', isRead: false, type: 'info' },
     ],
     feedback: [
-      { _id: 'f1', message: 'Good progress on the system design. Please add more detail to the API section.', createdAt: new Date('2026-03-10'), guide: 'Dr. S. Sharma' }
+      { _id: 'f1', comment: 'Good progress on the system design. Please add more detail to the API section.', date: new Date('2026-03-10'), guideName: 'Dr. Ananya Rao' }
     ]
   };
 

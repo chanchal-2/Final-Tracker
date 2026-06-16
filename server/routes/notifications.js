@@ -6,6 +6,46 @@ import dbStore from '../config/dbStore.js';
 
 const router = express.Router();
 
+// @desc    Create a new notification
+// @route   POST /api/notifications
+// @access  Private (HOD / Guide)
+router.post('/', protect, async (req, res) => {
+  try {
+    const { title, message, type, targetRoles, targetUsers, projectId } = req.body;
+    
+    if (mongoose.connection.readyState === 1) {
+      const newNotification = await Notification.create({
+        title,
+        message,
+        type: type || 'info',
+        targetRoles: targetRoles || [],
+        targetUsers: targetUsers || [],
+        projectId: projectId || null,
+        readBy: []
+      });
+      return res.status(201).json(newNotification);
+    } else {
+      // In-memory fallback
+      if (!dbStore.notifications) dbStore.notifications = [];
+      const newNotification = {
+        _id: Date.now().toString(),
+        title,
+        message,
+        type: type || 'info',
+        targetRoles: targetRoles || [],
+        targetUsers: targetUsers || [],
+        projectId: projectId || null,
+        readBy: [],
+        createdAt: new Date().toISOString()
+      };
+      dbStore.notifications.push(newNotification);
+      return res.status(201).json(newNotification);
+    }
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 // @desc    Get all relevant notifications for the logged-in user
 // @route   GET /api/notifications
 // @access  Private
@@ -15,10 +55,22 @@ router.get('/', protect, async (req, res) => {
       // Fetch notifications where:
       // 1. targetRoles includes user.role
       // 2. OR targetUsers includes user._id
+      // Only add targetUsers check if the ID is a valid ObjectId to prevent CastErrors
+      const userOrConditions = [{ targetRoles: req.user.role }];
+      if (mongoose.Types.ObjectId.isValid(req.user._id)) {
+        userOrConditions.push({ targetUsers: req.user._id });
+      }
+
       const notifications = await Notification.find({
-        $or: [
-          { targetRoles: req.user.role },
-          { targetUsers: req.user._id }
+        $and: [
+          { $or: userOrConditions },
+          {
+            $or: [
+              { scheduledFor: null },
+              { scheduledFor: { $exists: false } },
+              { scheduledFor: { $lte: new Date() } }
+            ]
+          }
         ]
       }).sort({ createdAt: -1 });
 
@@ -34,7 +86,11 @@ router.get('/', protect, async (req, res) => {
       // In-memory fallback
       if (!dbStore.notifications) dbStore.notifications = [];
       const notifications = dbStore.notifications
-        .filter(n => n.targetRoles.includes(req.user.role) || n.targetUsers.includes(req.user._id))
+        .filter(n => {
+          const roleMatch = n.targetRoles.includes(req.user.role) || n.targetUsers.includes(req.user._id);
+          const scheduleMatch = !n.scheduledFor || new Date(n.scheduledFor) <= new Date();
+          return roleMatch && scheduleMatch;
+        })
         .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
       
       const userNotifications = notifications.map(notif => ({

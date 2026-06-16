@@ -41,7 +41,6 @@ export default function Sidebar({ activeTab, setActiveTab, isCollapsed, setIsCol
     { id: 'approvals', label: 'Project Approvals', icon: CheckSquare },
     { id: 'reviews', label: 'Reviews & Feedback', icon: CheckSquare },
     { id: 'documents', label: 'Documents', icon: FileText },
-    { id: 'meetings', label: 'Meetings', icon: Video },
     { id: 'notifications', label: 'Notifications', icon: Bell },
     { id: 'reports', label: 'Reports', icon: PieChart },
   ];

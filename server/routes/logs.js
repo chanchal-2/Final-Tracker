@@ -2,6 +2,7 @@ import express from 'express';
 import mongoose from 'mongoose';
 import WorkLog from '../models/WorkLog.js';
 import Project from '../models/Project.js';
+import Notification from '../models/Notification.js';
 import { protect } from '../middleware/auth.js';
 import dbStore from '../config/dbStore.js';
 
@@ -12,7 +13,7 @@ const router = express.Router();
 // @access  Private
 router.get('/:projectId', protect, async (req, res) => {
   try {
-    if (mongoose.connection.readyState === 1) {
+    if (mongoose.connection.readyState === 1 && mongoose.Types.ObjectId.isValid(req.params.projectId)) {
       const logs = await WorkLog.find({ projectId: req.params.projectId })
         .sort({ createdAt: -1 });
       return res.json(logs);
@@ -39,7 +40,7 @@ router.post('/:projectId', protect, async (req, res) => {
   }
 
   try {
-    if (mongoose.connection.readyState === 1) {
+    if (mongoose.connection.readyState === 1 && mongoose.Types.ObjectId.isValid(req.params.projectId)) {
       const project = await Project.findById(req.params.projectId);
       if (!project) {
         return res.status(404).json({ message: 'Project not found' });
@@ -49,6 +50,16 @@ router.post('/:projectId', protect, async (req, res) => {
         projectId: req.params.projectId,
         author: req.user.name,
         log: log
+      });
+
+      // Notify the Guide and HOD about the new worklog
+      await Notification.create({
+        title: 'New Progress Update',
+        message: `${req.user.name} submitted a new progress log for project ${project.projectId}.`,
+        type: 'info',
+        targetRoles: ['hod'], // all hods
+        targetUsers: project.guideId ? [project.guideId] : [], // specific guide
+        projectId: project._id
       });
 
       return res.status(201).json(newLog);
@@ -68,6 +79,21 @@ router.post('/:projectId', protect, async (req, res) => {
       };
 
       dbStore.logs.push(newLog);
+
+      if (!dbStore.notifications) dbStore.notifications = [];
+      dbStore.notifications.push({
+        _id: 'notif_' + Math.random().toString(36).substr(2, 9),
+        title: 'New Progress Update',
+        message: `${req.user.name} submitted a new progress log for project ${project.projectId}.`,
+        type: 'info',
+        targetRoles: ['hod'],
+        // For UI testing mock-token bypass, ensure the generic mock guide also gets it
+        targetUsers: project.guideId ? [project.guideId.toString(), 'mock-guide-123'] : ['mock-guide-123'],
+        projectId: project._id,
+        readBy: [],
+        createdAt: new Date()
+      });
+
       return res.status(201).json(newLog);
     }
   } catch (error) {

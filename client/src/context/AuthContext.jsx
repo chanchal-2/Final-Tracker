@@ -27,7 +27,7 @@ export function AuthProvider({ children }) {
         return;
       }
       if (token === 'mock-token-guide') {
-        setUser({ _id: 'mock-guide-123', name: 'Dr. S. Sharma', email: 'guide@tracker.com', role: 'guide', department: 'Computer Science' });
+        setUser({ _id: 'user_guide_rao', name: 'Dr. Ananya Rao', email: 'guide@tracker.com', role: 'guide', department: 'Computer Science' });
         setLoading(false);
         return;
       }

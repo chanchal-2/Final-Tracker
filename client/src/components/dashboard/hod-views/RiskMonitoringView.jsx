@@ -1,13 +1,35 @@
 import React, { useState } from 'react';
-import { ShieldAlert, AlertCircle, Mail, Calendar, ExternalLink, Activity, CheckCircle2 } from 'lucide-react';
+import { ShieldAlert, AlertCircle, Mail, Calendar, ExternalLink, Activity, CheckCircle2, X, AlertTriangle, FileText, Database, Users } from 'lucide-react';
 
 export default function RiskMonitoringView() {
   const [warningsSent, setWarningsSent] = useState({});
   const [meetingsScheduled, setMeetingsScheduled] = useState({});
+  const [selectedProject, setSelectedProject] = useState(null);
 
-  const handleSendWarning = (id) => {
-    setWarningsSent(prev => ({ ...prev, [id]: true }));
-    setTimeout(() => alert(`Warning email successfully sent to the Guide and Students of project ${id}.`), 100);
+  const handleSendWarning = async (project) => {
+    try {
+      const res = await fetch('http://localhost:5000/api/notifications', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        },
+        body: JSON.stringify({
+          title: `⚠️ Urgent: Action Required for ${project.id}`,
+          message: `Your project "${project.title}" has been flagged by the HOD due to: ${project.reason}. Please meet with your guide immediately to resolve this.`,
+          type: 'error',
+          targetRoles: ['student', 'guide']
+        })
+      });
+
+      if (!res.ok) throw new Error('Failed to send notification');
+
+      setWarningsSent(prev => ({ ...prev, [project.id]: true }));
+      setTimeout(() => alert(`Warning successfully sent to the Guide and Students of project ${project.id}. They will receive a notification immediately.`), 100);
+    } catch (error) {
+      console.error(error);
+      alert('Error sending warning: ' + error.message);
+    }
   };
 
   const handleSchedule = (id) => {
@@ -15,8 +37,8 @@ export default function RiskMonitoringView() {
     setTimeout(() => alert(`Intervention meeting scheduled for project ${id}. Calendar invites have been sent.`), 100);
   };
 
-  const handleViewProject = (id) => {
-    alert(`Opening detailed project view for ${id}...`);
+  const handleViewProject = (project) => {
+    setSelectedProject(project);
   };
 
   const highRiskProjects = [
@@ -119,19 +141,19 @@ export default function RiskMonitoringView() {
 
             <div className="flex items-center gap-3 mt-6 pt-6 border-t border-slate-100 pl-2">
               <button 
-                onClick={() => handleViewProject(p.id)}
+                onClick={() => handleViewProject(p)}
                 className="flex-1 bg-white hover:bg-slate-50 text-slate-700 text-[10px] font-bold uppercase tracking-wider py-2.5 rounded-lg transition-colors border border-slate-200 flex items-center justify-center gap-2"
               >
                 <ExternalLink className="w-3.5 h-3.5" /> View Project
               </button>
               
               <button 
-                onClick={() => handleSendWarning(p.id)}
+                onClick={() => handleSendWarning(p)}
                 disabled={warningsSent[p.id]}
                 className={`flex-1 text-[10px] font-bold uppercase tracking-wider py-2.5 rounded-lg transition-colors border flex items-center justify-center gap-2 ${
                   warningsSent[p.id] 
-                    ? 'bg-emerald-50 border-emerald-200 text-emerald-600 cursor-default' 
-                    : 'bg-white hover:bg-indigo-50 text-indigo-600 border-slate-200 hover:border-indigo-200'
+                  ? 'bg-emerald-50 text-emerald-600 border-emerald-200'
+                  : 'bg-white hover:bg-rose-50 text-rose-600 border-rose-200'
                 }`}
               >
                 {warningsSent[p.id] ? <CheckCircle2 className="w-3.5 h-3.5" /> : <Mail className="w-3.5 h-3.5" />}
@@ -155,6 +177,114 @@ export default function RiskMonitoringView() {
           </div>
         ))}
       </div>
+
+      {/* Project Detail Modal */}
+      {selectedProject && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#0B1220]/60 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl overflow-hidden flex flex-col border border-slate-200 animate-in zoom-in-95 duration-200">
+            <div className="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+              <div className="flex items-center gap-3">
+                <span className={`text-[10px] font-black px-2 py-0.5 rounded uppercase tracking-widest ${
+                  selectedProject.riskLevel === 'High' ? 'bg-rose-100 text-rose-700' :
+                  selectedProject.riskLevel === 'Medium' ? 'bg-amber-100 text-amber-700' :
+                  'bg-yellow-100 text-yellow-700'
+                }`}>
+                  {selectedProject.riskLevel} Risk
+                </span>
+                <h3 className="text-lg font-black text-slate-800 tracking-tight">{selectedProject.id} Details</h3>
+              </div>
+              <button 
+                onClick={() => setSelectedProject(null)}
+                className="text-slate-400 hover:text-rose-500 transition-colors p-1 rounded-md hover:bg-rose-50"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            
+            <div className="p-6 space-y-6">
+              <div>
+                <h2 className="text-xl font-bold text-slate-800 leading-tight mb-2">{selectedProject.title}</h2>
+                <div className="flex flex-wrap gap-4 text-sm font-medium text-slate-500">
+                  <span className="flex items-center gap-1.5"><Users className="w-4 h-4" /> {selectedProject.group}</span>
+                  <span className="flex items-center gap-1.5"><ShieldAlert className="w-4 h-4" /> Guide: {selectedProject.guide}</span>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="bg-slate-50 border border-slate-100 rounded-xl p-4">
+                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Current Progress</p>
+                  <div className="flex items-end gap-2 mb-2">
+                    <span className="text-2xl font-black text-indigo-600">{selectedProject.progress}%</span>
+                    <span className="text-xs font-semibold text-slate-500 mb-1">Complete</span>
+                  </div>
+                  <div className="h-1.5 w-full bg-slate-200 rounded-full overflow-hidden">
+                    <div className="h-full bg-indigo-500 rounded-full" style={{ width: `${selectedProject.progress}%` }}></div>
+                  </div>
+                </div>
+                
+                <div className="bg-slate-50 border border-slate-100 rounded-xl p-4">
+                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Risk Score</p>
+                  <div className="flex items-end gap-2">
+                    <span className={`text-2xl font-black ${
+                      selectedProject.riskLevel === 'High' ? 'text-rose-600' : 'text-amber-600'
+                    }`}>{selectedProject.riskScore}</span>
+                    <span className="text-xs font-semibold text-slate-500 mb-1">/ 100</span>
+                  </div>
+                  <p className="text-xs font-medium text-slate-500 mt-2 flex items-center gap-1.5">
+                    <AlertTriangle className="w-3.5 h-3.5" /> {selectedProject.reason}
+                  </p>
+                </div>
+              </div>
+
+              <div>
+                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3">Recent Activity</p>
+                <div className="space-y-3">
+                  <div className="flex items-start gap-3 bg-white border border-slate-100 p-3 rounded-lg">
+                    <div className="w-8 h-8 rounded-full bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0">
+                      <Activity className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-slate-700">Last System Update</p>
+                      <p className="text-xs font-medium text-slate-500">{selectedProject.lastActivity}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3 bg-white border border-slate-100 p-3 rounded-lg opacity-60">
+                    <div className="w-8 h-8 rounded-full bg-slate-50 text-slate-400 flex items-center justify-center shrink-0">
+                      <FileText className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-slate-700">Previous Document Submission</p>
+                      <p className="text-xs font-medium text-slate-500">2 weeks prior</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div className="px-6 py-4 border-t border-slate-100 bg-slate-50 flex justify-end gap-3">
+              <button 
+                onClick={() => setSelectedProject(null)}
+                className="px-5 py-2.5 text-xs font-bold text-slate-600 uppercase tracking-wider hover:bg-slate-200 rounded-xl transition-colors"
+              >
+                Close
+              </button>
+              <button 
+                onClick={() => {
+                  setSelectedProject(null);
+                  handleSendWarning(selectedProject);
+                }}
+                disabled={warningsSent[selectedProject.id]}
+                className={`flex items-center gap-2 px-6 py-2.5 text-xs font-bold text-white uppercase tracking-wider rounded-xl transition-all shadow-md ${
+                  warningsSent[selectedProject.id] ? 'bg-emerald-500 shadow-emerald-500/25' : 'bg-rose-600 hover:bg-rose-500 shadow-rose-500/25'
+                }`}
+              >
+                {warningsSent[selectedProject.id] ? <CheckCircle2 className="w-4 h-4" /> : <Mail className="w-4 h-4" />}
+                {warningsSent[selectedProject.id] ? 'Warning Sent' : 'Send Warning'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

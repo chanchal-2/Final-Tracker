@@ -65,7 +65,7 @@ export default function StudentRegisterPage({ onBack, onGoToLogin }) {
   };
 
   return (
-    <div className="min-h-screen flex font-sans">
+    <div className="min-h-screen flex font-sans bg-[#F8FAFC]">
       {/* ══════════════════════════════════════════ */}
       {/* LEFT PANEL — Branding & Info              */}
       {/* ══════════════════════════════════════════ */}
@@ -152,7 +152,7 @@ export default function StudentRegisterPage({ onBack, onGoToLogin }) {
       {/* ══════════════════════════════════════════ */}
       {/* RIGHT PANEL — Registration Form           */}
       {/* ══════════════════════════════════════════ */}
-      <div className="flex-1 lg:ml-[48%] min-h-screen flex items-center justify-center bg-[#F8FAFC] px-6 py-12 overflow-y-auto">
+      <div className="flex-1 lg:ml-[48%] min-h-screen flex items-center justify-center px-6 py-12 overflow-y-auto">
         <div className="w-full max-w-md space-y-7">
           
           {/* Mobile back button */}

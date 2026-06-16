@@ -11,12 +11,26 @@ export default function AnnouncementsView({ token }) {
   const [success, setSuccess] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
 
-  // Mock past announcements
-  const pastAnnouncements = [
-    { id: 1, title: 'Final Report Format Guidelines', date: 'June 10, 2026', recipients: 'All Students', readPct: 85, status: 'Sent' },
-    { id: 2, title: 'Mid-term Evaluation Schedule', date: 'June 05, 2026', recipients: 'All Guides', readPct: 100, status: 'Sent' },
-    { id: 3, title: 'Plagiarism Policy Update', date: 'June 18, 2026', recipients: 'All Students', readPct: 0, status: 'Scheduled' }
-  ];
+  const [pastAnnouncements, setPastAnnouncements] = useState([]);
+
+  // Fetch history on mount
+  React.useEffect(() => {
+    fetchHistory();
+  }, []);
+
+  const fetchHistory = async () => {
+    try {
+      const res = await fetch('/api/announcements/history', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setPastAnnouncements(data);
+      }
+    } catch (err) {
+      console.error("Failed to fetch history", err);
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -31,13 +45,21 @@ export default function AnnouncementsView({ token }) {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`
         },
-        body: JSON.stringify({ title, message, recipient })
+        body: JSON.stringify({ 
+          title, 
+          message, 
+          recipient,
+          scheduledFor: isScheduled && scheduleDate ? new Date(scheduleDate).toISOString() : null
+        })
       });
 
       if (res.ok) {
         setSuccess(true);
         setTitle('');
         setMessage('');
+        setIsScheduled(false);
+        setScheduleDate('');
+        fetchHistory(); // Refresh history list
         setTimeout(() => setSuccess(false), 3000);
       } else {
         const errorData = await res.json();
@@ -204,32 +226,37 @@ export default function AnnouncementsView({ token }) {
             </h3>
 
             <div className="space-y-4">
-              {pastAnnouncements.map((ann) => (
-                <div key={ann.id} className="p-4 rounded-xl border border-slate-100 bg-slate-50 hover:bg-white hover:border-indigo-100 transition-colors group">
-                  <div className="flex justify-between items-start mb-2">
-                    <span className={`text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded border ${
-                      ann.status === 'Sent' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 'bg-amber-50 text-amber-600 border-amber-100'
-                    }`}>
-                      {ann.status}
-                    </span>
-                    <span className="text-[9px] font-bold text-slate-400">{ann.date}</span>
-                  </div>
-                  <h4 className="text-xs font-bold text-[#0B1220] mb-2 line-clamp-2" title={ann.title}>{ann.title}</h4>
+              {pastAnnouncements.length === 0 ? (
+                <p className="text-xs text-slate-500 font-semibold text-center py-4">No announcements published yet.</p>
+              ) : (
+                pastAnnouncements.map((ann) => {
+                  const isFuture = ann.scheduledFor && new Date(ann.scheduledFor) > new Date();
+                  const status = isFuture ? 'Scheduled' : 'Sent';
+                  const dateStr = new Date(ann.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+                  const readCount = ann.readBy ? ann.readBy.length : 0;
                   
-                  <div className="flex justify-between items-center text-[10px] font-bold text-slate-500 uppercase tracking-wider">
-                    <span className="flex items-center gap-1"><Users className="w-3 h-3 text-slate-400" /> {ann.recipients}</span>
-                    <span className={`flex items-center gap-1 ${ann.readPct === 100 ? 'text-emerald-500' : 'text-indigo-500'}`}>
-                      <Eye className="w-3 h-3" /> {ann.readPct}% Read
-                    </span>
-                  </div>
-                  
-                  {ann.status === 'Sent' && (
-                    <div className="h-1 w-full bg-slate-200 rounded-full mt-2 overflow-hidden">
-                      <div className="h-full bg-indigo-500 rounded-full" style={{ width: `${ann.readPct}%` }}></div>
+                  return (
+                    <div key={ann._id} className="p-4 rounded-xl border border-slate-100 bg-slate-50 hover:bg-white hover:border-indigo-100 transition-colors group">
+                      <div className="flex justify-between items-start mb-2">
+                        <span className={`text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded border ${
+                          status === 'Sent' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 'bg-amber-50 text-amber-600 border-amber-100'
+                        }`}>
+                          {status}
+                        </span>
+                        <span className="text-[9px] font-bold text-slate-400">{dateStr}</span>
+                      </div>
+                      <h4 className="text-xs font-bold text-[#0B1220] mb-2 line-clamp-2" title={ann.title}>{ann.title.replace('📣 Announcement: ', '')}</h4>
+                      
+                      <div className="flex justify-between items-center text-[10px] font-bold text-slate-500 uppercase tracking-wider">
+                        <span className="flex items-center gap-1"><Users className="w-3 h-3 text-slate-400" /> {ann.targetRoles.join(', ')}</span>
+                        <span className={`flex items-center gap-1 ${readCount > 0 ? 'text-emerald-500' : 'text-indigo-500'}`}>
+                          <Eye className="w-3 h-3" /> {readCount} Read
+                        </span>
+                      </div>
                     </div>
-                  )}
-                </div>
-              ))}
+                  );
+                })
+              )}
             </div>
             
             <button className="w-full mt-4 py-2.5 rounded-lg border border-slate-200 text-xs font-bold text-slate-600 uppercase tracking-wider hover:bg-slate-50 hover:text-indigo-600 transition-colors">

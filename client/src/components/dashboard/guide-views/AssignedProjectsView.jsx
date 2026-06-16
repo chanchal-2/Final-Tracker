@@ -34,6 +34,35 @@ export default function AssignedProjectsView({ projects, setProjects, setActiveT
         },
         body: JSON.stringify({ status: newStatusStr })
       });
+
+      // Send automated notification to the student if the status was changed to something definitive
+      if (newStatusStr !== 'Pending') {
+        const title = newAction === 'accept' ? `✅ Project Accepted: ${project.projectId}` 
+                    : newAction === 'reject' ? `❌ Project Rejected: ${project.projectId}`
+                    : `⏳ Project On Hold: ${project.projectId}`;
+        
+        const message = newAction === 'accept' ? `Great news! Your guide has officially accepted your project "${project.title}". You may now begin your work and start submitting progress updates.`
+                      : newAction === 'reject' ? `Your guide has rejected your project "${project.title}". Please consult with your guide and submit a revised proposal.`
+                      : `Your guide has placed your project "${project.title}" on hold. Please review any feedback and wait for further instructions.`;
+
+        const type = newAction === 'accept' ? 'success' : newAction === 'reject' ? 'error' : 'warning';
+
+        await fetch('/api/notifications', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          },
+          body: JSON.stringify({
+            title,
+            message,
+            type,
+            targetRoles: ['student'],
+            projectId: projId
+          })
+        });
+      }
+
     } catch (err) {
       console.error('Failed to update project status', err);
     }
