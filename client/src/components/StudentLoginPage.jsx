@@ -156,7 +156,7 @@ export default function StudentLoginPage({ onBack, onRegister }) {
           )}
 
           {/* Form */}
-          <form onSubmit={handleSubmit} className="space-y-5">
+          <form onSubmit={handleSubmit} className="space-y-5" autoComplete="off">
             {/* UUCMS Number */}
             <div className="space-y-1.5">
               <label className="block text-[11px] font-semibold text-slate-600 uppercase tracking-[0.06em]">
@@ -168,6 +168,7 @@ export default function StudentLoginPage({ onBack, onRegister }) {
                 value={uucms}
                 onChange={(e) => setUucms(e.target.value)}
                 disabled={isSubmitting}
+                autoComplete="off"
                 className="w-full text-sm font-medium px-4 py-3.5 rounded-2xl border border-slate-200 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/10 transition-all bg-white placeholder:text-slate-350"
               />
             </div>
@@ -184,6 +185,7 @@ export default function StudentLoginPage({ onBack, onRegister }) {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 disabled={isSubmitting}
+                autoComplete="new-password"
                 className="w-full text-sm font-medium px-4 py-3.5 rounded-2xl border border-slate-200 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/10 transition-all bg-white placeholder:text-slate-350"
               />
             </div>
@@ -201,6 +203,7 @@ export default function StudentLoginPage({ onBack, onRegister }) {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   disabled={isSubmitting}
+                  autoComplete="new-password"
                   className="w-full text-sm font-medium px-4 py-3.5 rounded-2xl border border-slate-200 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/10 transition-all bg-white placeholder:text-slate-350 pr-12"
                 />
                 <button

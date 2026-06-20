@@ -116,8 +116,8 @@ export default function LoginModal({ role, isOpen, onClose }) {
           </div>
         )}
 
-        {/* Form */}
-        <form onSubmit={handleSubmit} className="space-y-4">
+         {/* Form */}
+        <form onSubmit={handleSubmit} className="space-y-4" autoComplete="off">
           <div>
             <label className="block text-[10px] font-extrabold text-slate-405 uppercase tracking-wider mb-1">
               {details.label}
@@ -129,6 +129,7 @@ export default function LoginModal({ role, isOpen, onClose }) {
               placeholder={details.placeholder}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              autoComplete="new-email"
               className="w-full text-xs font-semibold px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:border-indigo-600 transition-colors bg-slate-50 focus:bg-white"
             />
           </div>
@@ -144,6 +145,7 @@ export default function LoginModal({ role, isOpen, onClose }) {
               placeholder="••••••••"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              autoComplete="new-password"
               className="w-full text-xs font-semibold px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:border-indigo-600 transition-colors bg-slate-50 focus:bg-white"
             />
           </div>
