@@ -25,7 +25,7 @@ const MOCK_PROJECTS = [
     status: 'Approved',
     progress: 72,
     student: 'Naveen Malviya',
-    team: 'Naveen Malviya, Priya Patel, Rahul Kumar',
+    team: 'Naveen Malviya',
     department: 'Computer Science',
     guide: 'Dr. Ananya Rao',
     documents: [

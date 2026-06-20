@@ -131,7 +131,7 @@ const seedInMemoryData = async () => {
       title: 'Autonomous Quadcopter Mapping',
       guide: 'Dr. Ananya Rao',
       guideId: 'user_guide_rao',
-      team: 'Vikram A., Pooja D.',
+      team: 'Vikram A.',
       status: 'Approved',
       progress: 90,
       milestones: [

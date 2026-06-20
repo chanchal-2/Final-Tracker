@@ -73,7 +73,7 @@ const seedData = async () => {
       title: 'AI-Powered Water Shortage Predictor',
       guide: 'Dr. Ananya Rao',
       guideId: guideRao._id,
-      team: 'Naveen Malviya, Priya Patel, Rahul Kumar',
+      team: 'Naveen Malviya',
       status: 'Approved',
       progress: 85,
       milestones: [
@@ -124,7 +124,7 @@ const seedData = async () => {
       title: 'Autonomous Quadcopter Mapping',
       guide: 'Dr. Ananya Rao',
       guideId: guideRao._id,
-      team: 'Vikram A., Pooja D.',
+      team: 'Vikram A.',
       status: 'Approved',
       progress: 90,
       milestones: [
