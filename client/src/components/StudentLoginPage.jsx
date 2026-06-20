@@ -14,7 +14,7 @@ export default function StudentLoginPage({ onBack, onRegister }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!email.trim() || !password.trim()) {
+    if (!uucms.trim() || !email.trim() || !password.trim()) {
       setErrorMsg('Please fill in all required fields.');
       return;
     }
@@ -160,10 +160,11 @@ export default function StudentLoginPage({ onBack, onRegister }) {
             {/* UUCMS Number */}
             <div className="space-y-1.5">
               <label className="block text-[11px] font-semibold text-slate-600 uppercase tracking-[0.06em]">
-                UUCMS Number
+                UUCMS Number <span className="text-red-400">*</span>
               </label>
               <input
                 type="text"
+                required
                 placeholder="Enter your UUCMS ID"
                 value={uucms}
                 onChange={(e) => setUucms(e.target.value)}

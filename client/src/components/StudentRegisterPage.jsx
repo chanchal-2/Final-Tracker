@@ -20,7 +20,7 @@ export default function StudentRegisterPage({ onBack, onGoToLogin }) {
     setErrorMsg('');
     setSuccessMsg('');
 
-    if (!fullName.trim() || !email.trim() || !password.trim() || !confirmPassword.trim()) {
+    if (!fullName.trim() || !email.trim() || !uucms.trim() || !password.trim() || !confirmPassword.trim()) {
       setErrorMsg('Please fill in all required fields.');
       return;
     }
@@ -239,10 +239,11 @@ export default function StudentRegisterPage({ onBack, onGoToLogin }) {
             {/* UUCMS ID */}
             <div className="space-y-1.5">
               <label className="block text-[11px] font-semibold text-slate-600 uppercase tracking-[0.06em]">
-                UUCMS ID
+                UUCMS ID <span className="text-red-400">*</span>
               </label>
               <input
                 type="text"
+                required
                 placeholder="e.g. 1RV22CS089"
                 value={uucms}
                 onChange={(e) => setUucms(e.target.value)}
