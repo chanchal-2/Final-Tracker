@@ -106,7 +106,7 @@ export default function ReviewsFeedbackView({ projects, setProjects, token, user
         >
           <option value="" disabled>-- Select a Project --</option>
           {projects.map(p => (
-            <option key={p._id} value={p._id}>[{p.projectId}] {p.title} ({p.team})</option>
+            <option key={p._id} value={p._id}>[{p.uucms || p.projectId}] {p.team}</option>
           ))}
         </select>
       </div>

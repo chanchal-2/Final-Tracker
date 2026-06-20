@@ -22,6 +22,11 @@ const UserSchema = new mongoose.Schema({
     enum: ['student', 'guide', 'hod'],
     required: true
   },
+  uucms: {
+    type: String,
+    trim: true,
+    default: ''
+  },
   projectId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Project',

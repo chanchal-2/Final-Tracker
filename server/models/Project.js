@@ -48,6 +48,11 @@ const ProjectSchema = new mongoose.Schema({
     unique: true,
     trim: true
   },
+  uucms: {
+    type: String,
+    trim: true,
+    default: ''
+  },
   title: {
     type: String,
     required: true,

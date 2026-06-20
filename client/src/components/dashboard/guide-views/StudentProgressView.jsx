@@ -64,7 +64,7 @@ export default function StudentProgressView({ projects, token }) {
         >
           <option value="All">All Assigned Projects</option>
           {projects.map(p => (
-            <option key={p._id} value={p._id}>[{p.projectId}] {p.title}</option>
+            <option key={p._id} value={p._id}>[{p.uucms || p.projectId}] {p.team}</option>
           ))}
         </select>
       </div>

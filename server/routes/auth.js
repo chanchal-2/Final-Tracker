@@ -20,7 +20,7 @@ const generateToken = (id) => {
 // @route   POST /api/auth/register
 // @access  Public
 router.post('/register', async (req, res) => {
-  const { name, email, password, role, department, projectId, guideName } = req.body;
+  const { name, email, password, role, department, projectId, guideName, uucms } = req.body;
 
   const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
   if (!passwordRegex.test(password)) {
@@ -46,6 +46,7 @@ router.post('/register', async (req, res) => {
 
         const newProject = await Project.create({
           projectId: `PRJ-${Date.now().toString().slice(-6)}`,
+          uucms: uucms || '',
           title: `${name}'s Project`,
           guide: guideName.trim(),
           guideId: guideUser ? guideUser._id : null,
@@ -63,6 +64,7 @@ router.post('/register', async (req, res) => {
         password,
         role,
         department,
+        uucms: uucms || '',
         projectId: resolvedProjectId
       });
 
