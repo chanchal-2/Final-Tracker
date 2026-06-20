@@ -16,6 +16,8 @@ export function AuthProvider({ children }) {
       }
 
       // --- MOCK BYPASS (no MongoDB needed) ---
+      // Commented out to ensure it uses the live database API
+      /*
       if (token === 'mock-token-hod') {
         setUser({ _id: 'mock-hod-123', name: 'Prof. H.R. Gowda', email: 'hod@projecttracker.edu', role: 'hod', department: 'Computer Science' });
         setLoading(false);
@@ -31,6 +33,7 @@ export function AuthProvider({ children }) {
         setLoading(false);
         return;
       }
+      */
       // ----------------------------------------
 
       try {
@@ -61,6 +64,8 @@ export function AuthProvider({ children }) {
 
   const login = async (email, password) => {
     // --- MOCK BYPASS ---
+    // Commented out to ensure it uses the live database API
+    /*
     if (email === 'hod' || email.toLowerCase().includes('hod')) {
       const u = { _id: 'mock-hod-123', name: 'Prof. H.R. Gowda', email: 'hod@projecttracker.edu', role: 'hod', department: 'Computer Science' };
       localStorage.setItem('token', 'mock-token-hod');
@@ -82,6 +87,7 @@ export function AuthProvider({ children }) {
       setUser(u);
       return { success: true };
     }
+    */
     // -------------------
 
     try {

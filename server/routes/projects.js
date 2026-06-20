@@ -37,12 +37,14 @@ router.get('/', protect, async (req, res) => {
         const projects = await Project.find({});
         return res.json(projects);
       } else if (req.user.role === 'guide') {
-        const projects = await Project.find({
-          $or: [{ guideId: req.user._id }, { guide: req.user.name }]
-        });
+        const queryOr = [{ guide: req.user.name }];
+        if (mongoose.Types.ObjectId.isValid(req.user._id)) {
+          queryOr.push({ guideId: req.user._id });
+        }
+        const projects = await Project.find({ $or: queryOr });
         return res.json(projects);
       } else if (req.user.role === 'student') {
-        if (!req.user.projectId) {
+        if (!req.user.projectId || !mongoose.Types.ObjectId.isValid(req.user.projectId)) {
           return res.json([]);
         }
         const project = await Project.findById(req.user.projectId);
@@ -270,13 +272,24 @@ router.post('/:id/documents', protect, upload.single('file'), async (req, res) =
 
       project.documents.push({ title, type, url });
       
+      // Determine guide ID to target
+      let targetUsers = [];
+      if (project.guideId) {
+        targetUsers.push(project.guideId);
+      } else {
+        const guideUser = await User.findOne({ name: project.guide, role: 'guide' });
+        if (guideUser) {
+          targetUsers.push(guideUser._id);
+        }
+      }
+
       // Global Notification to HOD and Guide
       await Notification.create({
         title: 'New Document Uploaded',
         message: `Student uploaded a new ${type} titled "${title}" for project ${project.projectId}.`,
         type: 'info',
         targetRoles: ['hod'], // all hods
-        targetUsers: project.guideId ? [project.guideId] : [], // specific guide
+        targetUsers: targetUsers,
         projectId: project._id
       });
 
@@ -290,6 +303,12 @@ router.post('/:id/documents', protect, upload.single('file'), async (req, res) =
       const newDoc = { title, type, url, uploadDate: new Date(), _id: 'doc_' + Math.random().toString(36).substr(2, 9) };
       project.documents.push(newDoc);
 
+      const memGuideUser = dbStore.users.find(u => u.name === project.guide && u.role === 'guide');
+      const memTargetUsers = project.guideId 
+        ? [project.guideId.toString()] 
+        : (memGuideUser ? [memGuideUser._id.toString()] : []);
+      memTargetUsers.push('mock-guide-123'); // Include mock-guide-123 for UI testing bypass
+
       if (!dbStore.notifications) dbStore.notifications = [];
       dbStore.notifications.push({
         _id: 'notif_' + Math.random().toString(36).substr(2, 9),
@@ -297,8 +316,7 @@ router.post('/:id/documents', protect, upload.single('file'), async (req, res) =
         message: `Student uploaded a new ${type} titled "${title}" for project ${project.projectId}.`,
         type: 'info',
         targetRoles: ['hod'],
-        // Include mock-guide-123 for UI testing bypass
-        targetUsers: project.guideId ? [project.guideId.toString(), 'mock-guide-123'] : ['mock-guide-123'],
+        targetUsers: memTargetUsers,
         projectId: project._id,
         readBy: [],
         createdAt: new Date()

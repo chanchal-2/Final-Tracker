@@ -3,11 +3,18 @@ import dotenv from 'dotenv';
 import User from './models/User.js';
 import Project from './models/Project.js';
 import WorkLog from './models/WorkLog.js';
+import dns from 'dns';
 
 dotenv.config();
 
 const seedData = async () => {
   try {
+    try {
+      dns.setServers(['8.8.8.8', '1.1.1.1']);
+    } catch (dnsErr) {
+      console.warn('Could not set custom DNS servers:', dnsErr.message);
+    }
+    
     const mongoUri = process.env.MONGO_URI || 'mongodb://localhost:27017/final_tracker_db';
     console.log(`Connecting to database for seeding: ${mongoUri}`);
     await mongoose.connect(mongoUri);
@@ -66,7 +73,7 @@ const seedData = async () => {
       title: 'AI-Powered Water Shortage Predictor',
       guide: 'Dr. Ananya Rao',
       guideId: guideRao._id,
-      team: 'Rajesh Kumar, Neha S.',
+      team: 'Naveen Malviya, Priya Patel, Rahul Kumar',
       status: 'Approved',
       progress: 85,
       milestones: [
@@ -132,7 +139,7 @@ const seedData = async () => {
     console.log('Inserting student users and linking to projects...');
     // Default student user with standard student@tracker.com email
     await User.create({
-      name: 'Rajesh Kumar',
+      name: 'Naveen Malviya',
       email: 'student@tracker.com',
       password: 'password123',
       role: 'student',
@@ -142,7 +149,7 @@ const seedData = async () => {
 
     // Student user with USN roll number 1RV22CS089
     await User.create({
-      name: 'Rajesh Kumar',
+      name: 'Naveen Malviya',
       email: '1RV22CS089',
       password: 'password123',
       role: 'student',
@@ -153,7 +160,7 @@ const seedData = async () => {
     console.log('Inserting weekly work logs...');
     await WorkLog.create({
       projectId: proj1._id,
-      author: 'Rajesh Kumar',
+      author: 'Naveen Malviya',
       log: 'Completed Random Forest model training and verified feature importance matrix.',
       date: new Date('2026-06-10')
     });

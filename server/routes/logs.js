@@ -2,6 +2,7 @@ import express from 'express';
 import mongoose from 'mongoose';
 import WorkLog from '../models/WorkLog.js';
 import Project from '../models/Project.js';
+import User from '../models/User.js';
 import Notification from '../models/Notification.js';
 import { protect } from '../middleware/auth.js';
 import dbStore from '../config/dbStore.js';
@@ -52,13 +53,24 @@ router.post('/:projectId', protect, async (req, res) => {
         log: log
       });
 
+      // Determine guide ID to target
+      let targetUsers = [];
+      if (project.guideId) {
+        targetUsers.push(project.guideId);
+      } else {
+        const guideUser = await User.findOne({ name: project.guide, role: 'guide' });
+        if (guideUser) {
+          targetUsers.push(guideUser._id);
+        }
+      }
+
       // Notify the Guide and HOD about the new worklog
       await Notification.create({
         title: 'New Progress Update',
         message: `${req.user.name} submitted a new progress log for project ${project.projectId}.`,
         type: 'info',
         targetRoles: ['hod'], // all hods
-        targetUsers: project.guideId ? [project.guideId] : [], // specific guide
+        targetUsers: targetUsers,
         projectId: project._id
       });
 
@@ -80,6 +92,12 @@ router.post('/:projectId', protect, async (req, res) => {
 
       dbStore.logs.push(newLog);
 
+      const memGuideUser = dbStore.users.find(u => u.name === project.guide && u.role === 'guide');
+      const memTargetUsers = project.guideId 
+        ? [project.guideId.toString()] 
+        : (memGuideUser ? [memGuideUser._id.toString()] : []);
+      memTargetUsers.push('mock-guide-123'); // For UI testing mock-token bypass, ensure the generic mock guide also gets it
+
       if (!dbStore.notifications) dbStore.notifications = [];
       dbStore.notifications.push({
         _id: 'notif_' + Math.random().toString(36).substr(2, 9),
@@ -87,8 +105,7 @@ router.post('/:projectId', protect, async (req, res) => {
         message: `${req.user.name} submitted a new progress log for project ${project.projectId}.`,
         type: 'info',
         targetRoles: ['hod'],
-        // For UI testing mock-token bypass, ensure the generic mock guide also gets it
-        targetUsers: project.guideId ? [project.guideId.toString(), 'mock-guide-123'] : ['mock-guide-123'],
+        targetUsers: memTargetUsers,
         projectId: project._id,
         readBy: [],
         createdAt: new Date()
