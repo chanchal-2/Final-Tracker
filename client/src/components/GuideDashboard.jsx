@@ -9,7 +9,7 @@ import AssignedProjectsView from './dashboard/guide-views/AssignedProjectsView';
 import StudentProgressView from './dashboard/guide-views/StudentProgressView';
 import GuideMilestonesView from './dashboard/guide-views/GuideMilestonesView';
 import ReviewsFeedbackView from './dashboard/guide-views/ReviewsFeedbackView';
-import ReportsView from './dashboard/guide-views/ReportsView';
+import GuideFeedbackView from './dashboard/guide-views/GuideFeedbackView';
 import DocumentsView from './dashboard/guide-views/DocumentsView';
 import NotificationsView from './dashboard/guide-views/NotificationsView';
 import PlaceholderViews from './dashboard/guide-views/PlaceholderViews';
@@ -206,7 +206,7 @@ export default function GuideDashboard() {
       case 'documents': return <DocumentsView {...props} />;
       case 'meetings': return <PlaceholderViews.Meetings {...props} />;
       case 'notifications': return <NotificationsView {...props} />;
-      case 'reports': return <ReportsView {...props} />;
+      case 'feedback': return <GuideFeedbackView {...props} />;
       default: return <GuideHomeView {...props} />;
     }
   };

@@ -181,7 +181,7 @@ export default function GuideManagementView({ token }) {
                         message: `HOD left feedback regarding your performance: "${feedbackText}"`,
                         type: 'info',
                         targetRoles: [],
-                        targetUsers: [selectedGuide.userId]
+                        targetUsers: [selectedGuide.name]
                       })
                     });
                     setIsSubmitting(false);

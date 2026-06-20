@@ -87,7 +87,7 @@ export default function ReviewsFeedbackView({ projects, setProjects, token, user
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-black text-[#0B1220] tracking-tight">Reviews & Feedback</h2>
+        <h2 className="text-2xl font-black text-[#0B1220] tracking-tight">Reviews</h2>
         <p className="text-sm text-slate-500 font-semibold mt-1">Evaluate student submissions and provide official project feedback.</p>
       </div>
 

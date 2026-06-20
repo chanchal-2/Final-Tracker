@@ -39,10 +39,10 @@ export default function Sidebar({ activeTab, setActiveTab, isCollapsed, setIsCol
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { id: 'assigned-projects', label: 'Assigned Projects', icon: FolderGit2 },
     { id: 'approvals', label: 'Project Approvals', icon: CheckSquare },
-    { id: 'reviews', label: 'Reviews & Feedback', icon: CheckSquare },
+    { id: 'reviews', label: 'Reviews', icon: CheckSquare },
     { id: 'documents', label: 'Documents', icon: FileText },
     { id: 'notifications', label: 'Notifications', icon: Bell },
-    { id: 'reports', label: 'Reports', icon: PieChart },
+    { id: 'feedback', label: 'HOD Feedback', icon: MessageSquare },
   ];
 
   const hodNavItems = [

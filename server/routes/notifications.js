@@ -1,6 +1,7 @@
 import express from 'express';
 import mongoose from 'mongoose';
 import Notification from '../models/Notification.js';
+import User from '../models/User.js';
 import { protect, authorize } from '../middleware/auth.js';
 import dbStore from '../config/dbStore.js';
 
@@ -14,12 +15,24 @@ router.post('/', protect, async (req, res) => {
     const { title, message, type, targetRoles, targetUsers, projectId } = req.body;
     
     if (mongoose.connection.readyState === 1) {
+      let resolvedTargetUsers = [];
+      if (targetUsers && Array.isArray(targetUsers)) {
+        for (const target of targetUsers) {
+          if (mongoose.Types.ObjectId.isValid(target)) {
+            resolvedTargetUsers.push(target);
+          } else {
+            const user = await User.findOne({ name: target });
+            if (user) resolvedTargetUsers.push(user._id);
+          }
+        }
+      }
+
       const newNotification = await Notification.create({
         title,
         message,
         type: type || 'info',
         targetRoles: targetRoles || [],
-        targetUsers: targetUsers || [],
+        targetUsers: resolvedTargetUsers,
         projectId: projectId || null,
         readBy: []
       });
