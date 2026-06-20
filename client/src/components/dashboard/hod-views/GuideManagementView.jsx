@@ -13,11 +13,11 @@ export default function GuideManagementView({ token }) {
 
   // Use state so we can add new guides dynamically
   const [guides, setGuides] = useState([
-    { id: 1, userId: 'user_guide_rao', name: 'Dr. Ananya Rao', groups: 8, maxGroups: 10, completedReviews: 45, pendingReviews: 3, avgResponse: '1.2 days', rating: 4.8 },
-    { id: 2, userId: 'user_guide_gowda', name: 'Prof. Rajesh Gowda', groups: 12, maxGroups: 12, completedReviews: 60, pendingReviews: 14, avgResponse: '3.5 days', rating: 3.9 },
-    { id: 3, userId: 'user_guide_murthy', name: 'Dr. Srinivas Murthy', groups: 5, maxGroups: 10, completedReviews: 28, pendingReviews: 1, avgResponse: '0.8 days', rating: 4.9 },
-    { id: 4, userId: 'mock-guide-123', name: 'Dr. Kavitha S.', groups: 9, maxGroups: 10, completedReviews: 35, pendingReviews: 5, avgResponse: '2.1 days', rating: 4.4 },
-    { id: 5, userId: 'mock-guide-123', name: 'Prof. Vikram Shetty', groups: 7, maxGroups: 8, completedReviews: 20, pendingReviews: 8, avgResponse: '4.0 days', rating: 3.5 }
+    { id: 1, userId: 'user_guide_rao', name: 'Dr. Ananya Rao', groups: 4, maxGroups: 5, students: 5, completedReviews: 10, pendingReviews: 2, avgResponse: '1.2 days', rating: 4.8 },
+    { id: 2, userId: 'user_guide_gowda', name: 'Prof. Rajesh Gowda', groups: 12, maxGroups: 12, completedReviews: 24, pendingReviews: 4, avgResponse: '3.5 days', rating: 3.9 },
+    { id: 3, userId: 'user_guide_murthy', name: 'Dr. Srinivas Murthy', groups: 5, maxGroups: 10, completedReviews: 10, pendingReviews: 1, avgResponse: '0.8 days', rating: 4.9 },
+    { id: 4, userId: 'mock-guide-123', name: 'Dr. Kavitha S.', groups: 9, maxGroups: 10, completedReviews: 18, pendingReviews: 3, avgResponse: '2.1 days', rating: 4.4 },
+    { id: 5, userId: 'mock-guide-456', name: 'Prof. Vikram Shetty', groups: 7, maxGroups: 8, completedReviews: 14, pendingReviews: 2, avgResponse: '1.5 days', rating: 4.7 }
   ]);
 
   return (
@@ -42,7 +42,7 @@ export default function GuideManagementView({ token }) {
             <thead>
               <tr className="bg-slate-50/50 border-b border-slate-200 text-[10px] uppercase font-black text-slate-500 tracking-wider">
                 <th className="py-4 px-6">Guide Name</th>
-                <th className="py-4 px-6 w-48">Workload (Assigned Groups)</th>
+                <th className="py-4 px-6 w-48">Workload (Assigned)</th>
                 <th className="py-4 px-6 text-center">Completed Reviews</th>
                 <th className="py-4 px-6 text-center">Pending Reviews</th>
                 <th className="py-4 px-6 text-right">Feedback</th>
@@ -67,14 +67,14 @@ export default function GuideManagementView({ token }) {
                             {guide.name}
 
                           </span>
-                          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{guide.groups * 4} Students Supervised</span>
+                          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{guide.students || guide.groups} Students Supervised</span>
                         </div>
                       </div>
                     </td>
 
                     <td className="py-4 px-6">
                       <div className="flex justify-between text-[10px] font-bold mb-1">
-                        <span className="text-slate-600">{guide.groups} / {guide.maxGroups} Groups</span>
+                        <span className="text-slate-600">{guide.groups} / {guide.maxGroups}</span>
                         <span className={workloadPct >= 100 ? 'text-rose-600' : 'text-slate-400'}>{workloadPct.toFixed(0)}%</span>
                       </div>
                       <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
