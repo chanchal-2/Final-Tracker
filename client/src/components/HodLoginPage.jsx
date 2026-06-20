@@ -169,7 +169,7 @@ export default function HodLoginPage({ onBack }) {
           )}
 
           {/* Form */}
-          <form onSubmit={handleSubmit} className="space-y-5">
+          <form onSubmit={handleSubmit} className="space-y-5" autoComplete="off">
             {/* Work Email */}
             <div className="space-y-1.5">
               <label className="block text-[11px] font-semibold text-slate-600 uppercase tracking-[0.06em]">
@@ -183,6 +183,7 @@ export default function HodLoginPage({ onBack }) {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   disabled={isSubmitting}
+                  autoComplete="new-email"
                   className="w-full text-sm font-medium px-4 py-3.5 rounded-2xl border border-slate-200 focus:outline-none focus:border-slate-800 focus:ring-2 focus:ring-slate-800/10 transition-all bg-white placeholder:text-slate-300"
                 />
               </div>
@@ -206,6 +207,7 @@ export default function HodLoginPage({ onBack }) {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   disabled={isSubmitting}
+                  autoComplete="new-password"
                   className="w-full text-sm font-medium px-4 py-3.5 rounded-2xl border border-slate-200 focus:outline-none focus:border-slate-800 focus:ring-2 focus:ring-slate-800/10 transition-all bg-white placeholder:text-slate-300 pr-12"
                 />
                 <button
