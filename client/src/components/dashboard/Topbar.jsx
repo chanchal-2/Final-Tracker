@@ -71,7 +71,7 @@ export default function Topbar({ isCollapsed, setIsCollapsed, activeTab }) {
       'dashboard': user?.role === 'hod' ? 'HOD Command Center' : user?.role === 'guide' ? 'Guide Dashboard' : 'Student Dashboard',
       'assigned-projects': 'Assigned Projects',
       'upload-project': 'Upload Project',
-      'progress-updates': 'Submit & Upload',
+      'progress-updates': 'Upload',
       'student-progress': 'Student Progress',
       'documents': 'Documents',
       'milestones': 'Milestones',

@@ -6,6 +6,7 @@ export default function StudentRegisterPage({ onBack, onGoToLogin }) {
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [uucms, setUucms] = useState('');
+  const [guideName, setGuideName] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -29,8 +30,9 @@ export default function StudentRegisterPage({ onBack, onGoToLogin }) {
       return;
     }
 
-    if (password.length < 6) {
-      setErrorMsg('Password must be at least 6 characters long.');
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
+    if (!passwordRegex.test(password)) {
+      setErrorMsg('Password must be at least 8 characters long, and include a capital letter, a lowercase letter, a number, and a special character.');
       return;
     }
 
@@ -46,6 +48,7 @@ export default function StudentRegisterPage({ onBack, onGoToLogin }) {
           password,
           role: 'student',
           uucms: uucms || undefined,
+          guideName: guideName.trim()
         }),
       });
 
@@ -249,6 +252,23 @@ export default function StudentRegisterPage({ onBack, onGoToLogin }) {
               />
             </div>
 
+            {/* Guide Name */}
+            <div className="space-y-1.5">
+              <label className="block text-[11px] font-semibold text-slate-600 uppercase tracking-[0.06em]">
+                Guide Name <span className="text-red-400">*</span>
+              </label>
+              <input
+                type="text"
+                required
+                placeholder="e.g. Dr. Ananya Rao"
+                value={guideName}
+                onChange={(e) => setGuideName(e.target.value)}
+                disabled={isSubmitting}
+                autoComplete="off"
+                className="w-full text-sm font-medium px-4 py-3.5 rounded-2xl border border-slate-200 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/10 transition-all bg-white placeholder:text-slate-350"
+              />
+            </div>
+
             {/* Create Password */}
             <div className="space-y-1.5">
               <label className="block text-[11px] font-semibold text-slate-600 uppercase tracking-[0.06em]">
@@ -258,7 +278,7 @@ export default function StudentRegisterPage({ onBack, onGoToLogin }) {
                 <input
                   type={showPassword ? 'text' : 'password'}
                   required
-                  placeholder="Min. 6 characters"
+                  placeholder="Min. 8 chars (A, a, 1, @)"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   disabled={isSubmitting}

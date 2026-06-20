@@ -3,6 +3,7 @@ import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 import mongoose from 'mongoose';
 import User from '../models/User.js';
+import Project from '../models/Project.js';
 import { protect } from '../middleware/auth.js';
 import dbStore from '../config/dbStore.js';
 
@@ -19,7 +20,12 @@ const generateToken = (id) => {
 // @route   POST /api/auth/register
 // @access  Public
 router.post('/register', async (req, res) => {
-  const { name, email, password, role, department, projectId } = req.body;
+  const { name, email, password, role, department, projectId, guideName } = req.body;
+
+  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
+  if (!passwordRegex.test(password)) {
+    return res.status(400).json({ message: 'Password must be at least 8 characters long, and include a capital letter, a lowercase letter, a number, and a special character.' });
+  }
 
   try {
     if (mongoose.connection.readyState === 1) {
@@ -29,13 +35,35 @@ router.post('/register', async (req, res) => {
         return res.status(400).json({ message: 'User already exists' });
       }
 
+      let resolvedProjectId = projectId || null;
+
+      // If user is registering as student and enters a guideName, create a project for them
+      if (role === 'student' && guideName && !resolvedProjectId) {
+        const guideUser = await User.findOne({ 
+          name: { $regex: new RegExp('^' + guideName.trim() + '$', 'i') }, 
+          role: 'guide' 
+        });
+
+        const newProject = await Project.create({
+          projectId: `PRJ-${Date.now().toString().slice(-6)}`,
+          title: `${name}'s Project`,
+          guide: guideName.trim(),
+          guideId: guideUser ? guideUser._id : null,
+          team: name,
+          status: 'Approved',
+          progress: 10
+        });
+
+        resolvedProjectId = newProject._id;
+      }
+
       const user = await User.create({
         name,
         email,
         password,
         role,
         department,
-        projectId: projectId || null
+        projectId: resolvedProjectId
       });
 
       return res.status(201).json({
@@ -60,6 +88,33 @@ router.post('/register', async (req, res) => {
       const salt = await bcrypt.genSalt(10);
       const hashedPassword = await bcrypt.hash(password, salt);
 
+      let resolvedProjectId = projectId || null;
+
+      if (role === 'student' && guideName && !resolvedProjectId) {
+        const memGuide = dbStore.users.find(
+          u => u.name.toLowerCase() === guideName.trim().toLowerCase() && u.role === 'guide'
+        );
+
+        const newProj = {
+          _id: 'proj_mem_' + Math.random().toString(36).substr(2, 9),
+          projectId: `PRJ-${Math.random().toString(36).substr(2, 6).toUpperCase()}`,
+          title: `${name}'s Project`,
+          guide: guideName.trim(),
+          guideId: memGuide ? memGuide._id : null,
+          team: name,
+          status: 'Approved',
+          progress: 10,
+          milestones: [
+            { title: 'Project Proposal Defence', date: 'May 05, 2026', status: 'done', grade: 'A+' },
+            { title: 'System Architecture Submission', date: 'May 20, 2026', status: 'active', grade: 'TBD' }
+          ]
+        };
+
+        if (!dbStore.projects) dbStore.projects = [];
+        dbStore.projects.push(newProj);
+        resolvedProjectId = newProj._id;
+      }
+
       const newUser = {
         _id: 'user_mem_' + Math.random().toString(36).substr(2, 9),
         name,
@@ -67,7 +122,7 @@ router.post('/register', async (req, res) => {
         password: hashedPassword,
         role,
         department: department || 'Computer Science',
-        projectId: projectId || null
+        projectId: resolvedProjectId
       };
 
       dbStore.users.push(newUser);

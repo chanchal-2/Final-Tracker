@@ -29,7 +29,7 @@ export default function Sidebar({ activeTab, setActiveTab, isCollapsed, setIsCol
 
   const studentNavItems = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
-    { id: 'progress-updates', label: 'Submit & Upload', icon: UploadCloud },
+    { id: 'progress-updates', label: 'Upload', icon: UploadCloud },
     { id: 'documents', label: 'Documents', icon: FileText },
     { id: 'notifications', label: 'Notifications', icon: Bell },
     { id: 'feedback', label: 'Feedback', icon: MessageSquare },

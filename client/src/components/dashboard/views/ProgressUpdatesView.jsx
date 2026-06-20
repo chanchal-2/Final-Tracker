@@ -1,12 +1,7 @@
 import React, { useState } from 'react';
-import { UploadCloud, FileCheck2, FileText, CheckCircle, AlertCircle, ClipboardList, FolderOpen } from 'lucide-react';
+import { UploadCloud, FileText, CheckCircle, AlertCircle, ClipboardList, FolderOpen } from 'lucide-react';
 
 export default function ProgressUpdatesView({ project, setProject, logs, setLogs, token, setActiveTab }) {
-
-  // ── Weekly Log State ────────────────────────────────
-  const [newLogText, setNewLogText] = useState('');
-  const [submitLoading, setSubmitLoading] = useState(false);
-  const [logMsg, setLogMsg] = useState('');
 
   // ── Document Upload State ───────────────────────────
   const [docTitle, setDocTitle] = useState('');
@@ -15,35 +10,6 @@ export default function ProgressUpdatesView({ project, setProject, logs, setLogs
   const [uploading, setUploading] = useState(false);
   const [uploadMsg, setUploadMsg] = useState('');
   const [uploadMsgType, setUploadMsgType] = useState('');
-
-  // ── Submit Weekly Log ───────────────────────────────
-  const handleAddLog = async (e) => {
-    e.preventDefault();
-    if (!newLogText.trim() || !project) return;
-    setSubmitLoading(true);
-    setLogMsg('');
-    try {
-      const res = await fetch(`/api/logs/${project._id}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ log: newLogText })
-      });
-      if (res.ok) {
-        const newLog = await res.json();
-        setLogs([newLog, ...logs]);
-        setNewLogText('');
-        setLogMsg('✓ Work log submitted successfully!');
-        setTimeout(() => setLogMsg(''), 3000);
-      } else {
-        const err = await res.json();
-        setLogMsg(err.message || 'Failed to submit log');
-      }
-    } catch (err) {
-      setLogMsg('Network error. Please try again.');
-    } finally {
-      setSubmitLoading(false);
-    }
-  };
 
   // ── Upload Document ─────────────────────────────────
   const handleUpload = async (e) => {
@@ -98,8 +64,8 @@ export default function ProgressUpdatesView({ project, setProject, logs, setLogs
             <ClipboardList className="w-6 h-6" />
           </div>
           <div>
-            <h2 className="text-2xl font-extrabold text-[#0B1220] tracking-tight">Submit & Upload</h2>
-            <p className="text-xs text-slate-500 font-semibold mt-0.5">Log your weekly progress and upload project documents in one place.</p>
+            <h2 className="text-2xl font-extrabold text-[#0B1220] tracking-tight">Upload</h2>
+            <p className="text-xs text-slate-500 font-semibold mt-0.5">Upload project documents and resources.</p>
           </div>
         </div>
 
@@ -114,55 +80,8 @@ export default function ProgressUpdatesView({ project, setProject, logs, setLogs
         </button>
       </div>
 
-      {/* Two-column layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
-
-        {/* ── LEFT: Weekly Progress Log ─────────────────── */}
-        <div className="bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 shadow-sm h-full">
-          {/* Section Header */}
-          <div className="flex items-center gap-3 mb-6 pb-5 border-b border-slate-100">
-            <div className="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-600">
-              <FileCheck2 className="w-5 h-5" />
-            </div>
-            <div>
-              <h3 className="text-sm font-extrabold text-[#0B1220] tracking-tight">Weekly Progress Log</h3>
-              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">Progress Entry</p>
-            </div>
-          </div>
-
-          {/* Success/Error Message */}
-          {logMsg && (
-            <div className="mb-4 p-3 bg-emerald-50 text-emerald-700 text-xs font-bold rounded-xl border border-emerald-100 flex items-center gap-2">
-              <CheckCircle className="w-4 h-4 shrink-0" />
-              {logMsg}
-            </div>
-          )}
-
-          <form onSubmit={handleAddLog} className="space-y-4">
-            <div>
-              <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2">
-                Detailed Update Description
-              </label>
-              <textarea
-                required
-                rows={8}
-                disabled={submitLoading}
-                placeholder="Detail tasks completed this week, any blockages encountered, and code repository links..."
-                value={newLogText}
-                onChange={(e) => setNewLogText(e.target.value)}
-                className="w-full text-sm font-semibold px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/10 resize-none bg-slate-50 focus:bg-white transition-colors"
-              />
-            </div>
-            <button
-              type="submit"
-              disabled={submitLoading}
-              className="w-full text-xs font-bold text-white px-5 py-3.5 rounded-xl bg-[#0B1220] hover:bg-emerald-600 transition-all flex items-center justify-center gap-2 shadow-sm cursor-pointer disabled:bg-slate-400 uppercase tracking-widest"
-            >
-              <FileCheck2 className="w-4 h-4" />
-              <span>{submitLoading ? 'Submitting...' : 'Submit Work Log'}</span>
-            </button>
-          </form>
-        </div>
+      {/* Centered single-column layout */}
+      <div className="max-w-2xl mx-auto">
 
         {/* ── RIGHT: Upload Document ────────────────────── */}
         <div className="bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 shadow-sm h-full">
