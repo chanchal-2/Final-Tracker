@@ -153,7 +153,7 @@ export default function GuideDashboard() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await fetch('/api/projects', {
+        const res = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/projects', {
           headers: { Authorization: `Bearer ${token}` }
         });
         if (res.ok) {

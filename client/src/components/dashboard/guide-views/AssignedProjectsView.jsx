@@ -47,7 +47,7 @@ export default function AssignedProjectsView({ projects, setProjects, setActiveT
 
         const type = newAction === 'accept' ? 'success' : newAction === 'reject' ? 'error' : 'warning';
 
-        await fetch('/api/notifications', {
+        await fetch(`${import.meta.env.VITE_API_URL || ''}/api/notifications', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

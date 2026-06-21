@@ -7,7 +7,7 @@ export default function NotificationsView({ token }) {
   useEffect(() => {
     const fetchNotifications = async () => {
       try {
-        const res = await fetch('/api/notifications', {
+        const res = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/notifications', {
           headers: { Authorization: `Bearer ${token}` }
         });
         if (res.ok) {

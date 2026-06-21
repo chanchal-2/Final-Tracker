@@ -56,7 +56,7 @@ export default function StudentDashboard() {
   const fetchData = async () => {
     try {
       // 1. Get project
-      const projectRes = await fetch('/api/projects', {
+      const projectRes = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/projects', {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (projectRes.ok) {
