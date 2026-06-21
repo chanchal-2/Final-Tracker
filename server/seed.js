@@ -68,8 +68,9 @@ const seedData = async () => {
     });
 
     console.log('Inserting projects...');
-    const proj1 = await Project.create({
-      projectId: 'CSE-04',
+    const projRao1 = await Project.create({
+      projectId: 'U03AI23S0015',
+      uucms: 'U03AI23S0015',
       title: 'AI-Powered Water Shortage Predictor',
       guide: 'Dr. Ananya Rao',
       guideId: guideRao._id,
@@ -83,6 +84,54 @@ const seedData = async () => {
         { title: 'Weekly Progress Review 02', date: 'June 15, 2026', status: 'active', grade: 'TBD' },
         { title: 'Mid-term Assessment', date: 'June 28, 2026', status: 'locked', grade: '' }
       ]
+    });
+
+    const projRao2 = await Project.create({
+      projectId: 'U03AI23S0017',
+      uucms: 'U03AI23S0017',
+      title: 'Machine Learning Project',
+      guide: 'Dr. Ananya Rao',
+      guideId: guideRao._id,
+      team: 'Anjali',
+      status: 'Pending',
+      progress: 40,
+      milestones: []
+    });
+
+    const projRao3 = await Project.create({
+      projectId: 'U03AI23S0025',
+      uucms: 'U03AI23S0025',
+      title: 'Computer Vision Application',
+      guide: 'Dr. Ananya Rao',
+      guideId: guideRao._id,
+      team: 'Chanchal',
+      status: 'Delayed',
+      progress: 65,
+      milestones: []
+    });
+
+    const projRao4 = await Project.create({
+      projectId: 'U03AI23S0055',
+      uucms: 'U03AI23S0055',
+      title: 'Cloud Computing System',
+      guide: 'Dr. Ananya Rao',
+      guideId: guideRao._id,
+      team: 'Jyoti Mishra',
+      status: 'Approved',
+      progress: 90,
+      milestones: []
+    });
+
+    const projRao5 = await Project.create({
+      projectId: 'U03AI23S0013',
+      uucms: 'U03AI23S0013',
+      title: 'Data Science Research',
+      guide: 'Dr. Ananya Rao',
+      guideId: guideRao._id,
+      team: 'Pooja',
+      status: 'Approved',
+      progress: 75,
+      milestones: []
     });
 
     const proj2 = await Project.create({
@@ -119,56 +168,39 @@ const seedData = async () => {
       ]
     });
 
-    const proj4 = await Project.create({
-      projectId: 'CSE-18',
-      title: 'Autonomous Quadcopter Mapping',
-      guide: 'Dr. Ananya Rao',
-      guideId: guideRao._id,
-      team: 'Vikram A.',
-      status: 'Approved',
-      progress: 90,
-      milestones: [
-        { title: 'Project Proposal Defence', date: 'May 05, 2026', status: 'done', grade: 'A+' },
-        { title: 'System Architecture Submission', date: 'May 20, 2026', status: 'done', grade: 'A+' },
-        { title: 'Weekly Progress Review 01', date: 'June 03, 2026', status: 'done', grade: 'A' },
-        { title: 'Weekly Progress Review 02', date: 'June 15, 2026', status: 'active', grade: 'TBD' },
-        { title: 'Mid-term Assessment', date: 'June 28, 2026', status: 'locked', grade: '' }
-      ]
-    });
-
     console.log('Inserting student users and linking to projects...');
-    // Default student user with standard student@tracker.com email
-    await User.create({
-      name: 'Naveen Malviya',
-      email: 'student@tracker.com',
-      password: 'password123',
-      role: 'student',
-      projectId: proj1._id,
-      department: 'Computer Science'
-    });
-
-    // Student user with USN roll number 1RV22CS089
-    await User.create({
-      name: 'Naveen Malviya',
-      email: '1RV22CS089',
-      password: 'password123',
-      role: 'student',
-      projectId: proj1._id,
-      department: 'Computer Science'
-    });
+    const studentsData = [
+      { name: 'Naveen Malviya', email: 'U03AI23S0015', projId: projRao1._id },
+      { name: 'Anjali', email: 'U03AI23S0017', projId: projRao2._id },
+      { name: 'Chanchal', email: 'U03AI23S0025', projId: projRao3._id },
+      { name: 'Jyoti Mishra', email: 'U03AI23S0055', projId: projRao4._id },
+      { name: 'Pooja', email: 'U03AI23S0013', projId: projRao5._id },
+    ];
+    
+    for (const st of studentsData) {
+      await User.create({
+        name: st.name,
+        email: st.email,
+        password: 'password123',
+        role: 'student',
+        projectId: st.projId,
+        department: 'Computer Science',
+        uucms: st.email
+      });
+    }
 
     console.log('Inserting weekly work logs...');
     await WorkLog.create({
-      projectId: proj1._id,
+      projectId: projRao1._id,
       author: 'Naveen Malviya',
       log: 'Completed Random Forest model training and verified feature importance matrix.',
       date: new Date('2026-06-10')
     });
 
     await WorkLog.create({
-      projectId: proj1._id,
-      author: 'Neha S.',
-      log: 'Set up Vite + React frontend boilerplate and Tailwind CSS v4 configurations.',
+      projectId: projRao2._id,
+      author: 'Anjali',
+      log: 'Set up frontend boilerplate.',
       date: new Date('2026-06-03')
     });
 

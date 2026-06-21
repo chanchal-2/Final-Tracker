@@ -157,11 +157,7 @@ export default function DocumentRepositoryView() {
                       <span className="flex items-center gap-1.5"><Database className="w-3.5 h-3.5 text-slate-400" /> {doc.domain}</span>
                     </div>
                     
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4 pt-4 border-t border-slate-100">
-                      <div>
-                        <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-0.5">Group</p>
-                        <p className="text-xs font-semibold text-slate-700">{doc.group}</p>
-                      </div>
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-4 pt-4 border-t border-slate-100">
                       <div>
                         <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-0.5">Guide</p>
                         <p className="text-xs font-semibold text-slate-700">{doc.guide}</p>
@@ -170,19 +166,11 @@ export default function DocumentRepositoryView() {
                         <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-0.5">Size / Date</p>
                         <p className="text-xs font-semibold text-slate-700">{doc.size} • {doc.uploaded}</p>
                       </div>
-                      <div className="flex items-center justify-end gap-2 md:col-start-4">
-                        <button onClick={() => alert(`Viewing version history for ${doc.id}`)} className="w-8 h-8 rounded-lg bg-slate-50 hover:bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-600 transition-colors" title="View Version History">
-                          <History className="w-4 h-4" />
-                        </button>
-                        <button onClick={() => alert(`Share link copied for ${doc.id}!`)} className="w-8 h-8 rounded-lg bg-slate-50 hover:bg-indigo-50 border border-slate-200 hover:border-indigo-200 flex items-center justify-center text-slate-600 hover:text-indigo-600 transition-colors" title="Share Document">
-                          <Share2 className="w-4 h-4" />
-                        </button>
-                        <button onClick={() => alert(`Started downloading ${doc.title}...`)} className="w-8 h-8 rounded-lg bg-slate-50 hover:bg-indigo-50 border border-slate-200 hover:border-indigo-200 flex items-center justify-center text-slate-600 hover:text-indigo-600 transition-colors" title="Download">
-                          <Download className="w-4 h-4" />
-                        </button>
-                        <button onClick={() => alert(`Opening document viewer for ${doc.id}`)} className="px-3 h-8 rounded-lg bg-indigo-600 hover:bg-indigo-500 flex items-center justify-center text-white text-[10px] font-bold uppercase tracking-widest transition-colors shadow-sm gap-1.5" title="View Document">
+                      <div className="flex items-center justify-end gap-2 md:col-start-3">
+
+                        <a href="/sample.pdf" target="_blank" rel="noreferrer" className="px-3 h-8 rounded-lg bg-indigo-600 hover:bg-indigo-500 flex items-center justify-center text-white text-[10px] font-bold uppercase tracking-widest transition-colors shadow-sm gap-1.5" title="View Document">
                           <Eye className="w-3.5 h-3.5" /> View
-                        </button>
+                        </a>
                       </div>
                     </div>
                   </div>

@@ -127,13 +127,7 @@ export default function DashboardHome({ project, logs, setActiveTab }) {
                   <UploadCloud className="w-4 h-4" />
                   <span>Upload Project File</span>
                 </button>
-                <button 
-                  onClick={() => setActiveTab('progress-updates')}
-                  className="inline-flex items-center gap-2 bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 text-xs font-bold px-5 py-2.5 rounded-xl transition-all"
-                >
-                  <span>Submit Update</span>
-                  <ArrowRight className="w-4 h-4" />
-                </button>
+
               </div>
             </div>
           </div>

@@ -9,7 +9,6 @@ import Footer from './components/Footer';
 import CtaSection from './components/CtaSection';
 import HodLoginPage from './components/HodLoginPage';
 import StudentLoginPage from './components/StudentLoginPage';
-import StudentRegisterPage from './components/StudentRegisterPage';
 import GuideLoginPage from './components/GuideLoginPage';
 import StudentDashboard from './components/StudentDashboard';
 import GuideDashboard from './components/GuideDashboard';
@@ -103,17 +102,6 @@ function AppContent() {
     return (
       <StudentLoginPage 
         onBack={() => handleSetLoginRole(null)} 
-        onRegister={() => handleSetLoginRole('student-register')} 
-      />
-    );
-  }
-
-  // Full-screen Student Registration Page
-  if (!user && loginRole === 'student-register') {
-    return (
-      <StudentRegisterPage 
-        onBack={() => handleSetLoginRole(null)} 
-        onGoToLogin={() => handleSetLoginRole('student')} 
       />
     );
   }

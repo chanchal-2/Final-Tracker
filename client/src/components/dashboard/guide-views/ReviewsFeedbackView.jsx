@@ -98,7 +98,7 @@ export default function ReviewsFeedbackView({ projects, setProjects, token, user
       )}
 
       <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
-        <label className="block text-xs font-black text-slate-400 uppercase tracking-wider mb-2">Select Project Group to Review</label>
+        <label className="block text-xs font-black text-slate-400 uppercase tracking-wider mb-2">Select Student to Review</label>
         <select 
           value={selectedProjId}
           onChange={(e) => handleSelect(e.target.value)}

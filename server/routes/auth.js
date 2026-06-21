@@ -158,6 +158,14 @@ router.post('/login', async (req, res) => {
       const user = await User.findOne({ email: formattedEmail });
 
       if (user && (await user.matchPassword(password))) {
+        const allowedStudents = ['u03ai23s0015', 'u03ai23s0017', 'u03ai23s0025', 'u03ai23s0055', 'u03ai23s0013'];
+        const userEmail = user.email ? user.email.toLowerCase() : '';
+        const userUucms = user.uucms ? user.uucms.toLowerCase() : '';
+        
+        if (user.role === 'student' && !allowedStudents.includes(userEmail) && !allowedStudents.includes(userUucms)) {
+          return res.status(403).json({ message: 'Unauthorized Student Account' });
+        }
+
         return res.json({
           _id: user._id,
           name: user.name,
@@ -177,6 +185,14 @@ router.post('/login', async (req, res) => {
       );
 
       if (user && (await bcrypt.compare(password, user.password))) {
+        const allowedStudents = ['u03ai23s0015', 'u03ai23s0017', 'u03ai23s0025', 'u03ai23s0055', 'u03ai23s0013'];
+        const userEmail = user.email ? user.email.toLowerCase() : '';
+        const userUucms = user.uucms ? user.uucms.toLowerCase() : '';
+
+        if (user.role === 'student' && !allowedStudents.includes(userEmail) && !allowedStudents.includes(userUucms)) {
+          return res.status(403).json({ message: 'Unauthorized Student Account' });
+        }
+
         return res.json({
           _id: user._id,
           name: user.name,
