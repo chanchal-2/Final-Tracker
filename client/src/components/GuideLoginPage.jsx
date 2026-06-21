@@ -231,12 +231,6 @@ export default function GuideLoginPage({ onBack }) {
             </button>
           </form>
 
-          {/* Mock credentials hint */}
-          <div className="text-center pt-2">
-            <span className="text-[10px] font-semibold text-slate-400 bg-slate-100 border border-slate-150 px-4 py-2 rounded-full inline-block">
-              💡 Demo: guide@tracker.com / password123
-            </span>
-          </div>
         </div>
       </div>
     </div>

@@ -37,7 +37,7 @@ export default function GuideMilestonesView({ projects, setProjects, token }) {
     setMsg('');
 
     try {
-      const res = await fetch(`/api/projects/${selectedProj._id}`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/projects/${selectedProj._id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

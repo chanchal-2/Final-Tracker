@@ -236,4 +236,28 @@ router.get('/me', protect, async (req, res) => {
   }
 });
 
+// @desc    Get all users (optionally filter by role)
+// @route   GET /api/auth/users
+// @access  Private
+router.get('/users', protect, async (req, res) => {
+  try {
+    const filter = {};
+    if (req.query.role) {
+      filter.role = req.query.role;
+    }
+
+    if (mongoose.connection.readyState === 1) {
+      const users = await User.find(filter).select('-password');
+      return res.json(users);
+    } else {
+      const users = dbStore.users
+        .filter(u => !filter.role || u.role === filter.role)
+        .map(({ password, ...userWithoutPassword }) => userWithoutPassword);
+      return res.json(users);
+    }
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 export default router;

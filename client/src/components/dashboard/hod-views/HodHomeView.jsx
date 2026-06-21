@@ -19,24 +19,29 @@ const PieChartIcon = (props) => (
 export default function HodHomeView({ projects }) {
   const { user } = useAuth();
 
-  // Simulated metrics for the UI (as requested by the prompt)
   const metrics = {
-    totalStudents: 240,
-    totalGroups: 60,
-    totalGuides: 15,
-    activeProjects: projects.length || 58,
-    completedProjects: projects.filter(p => p.status === 'Approved').length || 12,
-    delayedProjects: projects.filter(p => p.status === 'Delayed' || p.status === 'At Risk').length || 5,
-    pendingApprovals: projects.filter(p => p.status === 'Pending').length || 8,
-    upcomingVivas: 10
+    totalStudents: projects.reduce((acc, p) => acc + (p.team ? p.team.split(',').length : 1), 0),
+    totalGroups: projects.length,
+    totalGuides: new Set(projects.map(p => p.guide)).size,
+    activeProjects: projects.length,
+    completedProjects: projects.filter(p => p.status === 'Approved').length,
+    delayedProjects: projects.filter(p => p.status === 'Delayed' || p.status === 'At Risk').length,
+    pendingApprovals: projects.filter(p => p.status === 'Pending').length,
+    upcomingVivas: projects.filter(p => p.progress >= 90 && p.status !== 'Approved').length
   };
 
-  // Simulated high-risk projects
-  const highRiskProjects = [
-    { id: 'CSE-42', title: 'AI Driven Autonomous Swarm Drones', group: 'Team Alpha', guide: 'Dr. Ananya Rao', progress: 35, riskScore: 85, reason: 'No update in 14 days' },
-    { id: 'CSE-18', title: 'Blockchain Based Land Registry', group: 'Team Block', guide: 'Prof. Rajesh Gowda', progress: 15, riskScore: 70, reason: 'Missed Milestone 2' },
-    { id: 'CSE-09', title: 'Predictive Maintenance IoT System', group: 'IoT Wizards', guide: 'Dr. Srinivas', progress: 60, riskScore: 65, reason: 'Pending document review' }
-  ];
+  // High-risk projects
+  const highRiskProjects = projects
+    .filter(p => p.status === 'Delayed' || p.status === 'At Risk')
+    .map(p => ({
+      id: p.projectId,
+      title: p.title,
+      group: p.team,
+      guide: p.guide,
+      progress: p.progress,
+      riskScore: p.status === 'At Risk' ? 85 : 65,
+      reason: p.status === 'At Risk' ? 'Critical Delays' : 'Missed Milestone'
+    }));
 
   const StatCard = ({ title, value, icon: Icon, trend, colorClass, bgClass, trendUp }) => (
     <div className="relative overflow-hidden bg-white/70 backdrop-blur-md border border-slate-200/60 p-5 rounded-2xl shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all group">

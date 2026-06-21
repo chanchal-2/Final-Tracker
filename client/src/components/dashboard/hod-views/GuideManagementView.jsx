@@ -11,14 +11,37 @@ export default function GuideManagementView({ token }) {
   const [newGuideName, setNewGuideName] = useState('');
   const [newGuideCapacity, setNewGuideCapacity] = useState('10');
 
-  // Use state so we can add new guides dynamically
-  const [guides, setGuides] = useState([
-    { id: 1, userId: 'user_guide_rao', name: 'Dr. Ananya Rao', groups: 4, maxGroups: 5, students: 5, completedReviews: 10, pendingReviews: 2, avgResponse: '1.2 days', rating: 4.8 },
-    { id: 2, userId: 'user_guide_gowda', name: 'Prof. Rajesh Gowda', groups: 12, maxGroups: 12, completedReviews: 24, pendingReviews: 4, avgResponse: '3.5 days', rating: 3.9 },
-    { id: 3, userId: 'user_guide_murthy', name: 'Dr. Srinivas Murthy', groups: 5, maxGroups: 10, completedReviews: 10, pendingReviews: 1, avgResponse: '0.8 days', rating: 4.9 },
-    { id: 4, userId: 'mock-guide-123', name: 'Dr. Kavitha S.', groups: 9, maxGroups: 10, completedReviews: 18, pendingReviews: 3, avgResponse: '2.1 days', rating: 4.4 },
-    { id: 5, userId: 'mock-guide-456', name: 'Prof. Vikram Shetty', groups: 7, maxGroups: 8, completedReviews: 14, pendingReviews: 2, avgResponse: '1.5 days', rating: 4.7 }
-  ]);
+  const [guides, setGuides] = useState([]);
+  
+  useEffect(() => {
+    const fetchGuides = async () => {
+      try {
+        const res = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/auth/users?role=guide`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        if (res.ok) {
+          const data = await res.json();
+          // Transform user data to match expected guide object structure for the table
+          const transformedGuides = data.map(u => ({
+            id: u._id,
+            userId: u._id,
+            name: u.name,
+            groups: 0, // Real implementation would aggregate this from projects
+            maxGroups: 10,
+            students: 0,
+            completedReviews: 0,
+            pendingReviews: 0,
+            avgResponse: 'N/A',
+            rating: 0
+          }));
+          setGuides(transformedGuides);
+        }
+      } catch (err) {
+        console.error('Error fetching guides:', err);
+      }
+    };
+    fetchGuides();
+  }, [token]);
 
   return (
     <div className="space-y-6 animate-in fade-in duration-500">

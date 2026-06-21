@@ -36,7 +36,7 @@ export default function ReviewsFeedbackView({ projects, setProjects, token, user
 
     try {
       // 1. Update Project Status/Progress
-      const resPut = await fetch(`/api/projects/${selectedProj._id}`, {
+      const resPut = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/projects/${selectedProj._id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -56,7 +56,7 @@ export default function ReviewsFeedbackView({ projects, setProjects, token, user
       // 2. Submit Feedback if present (triggers notification)
       let updatedProj = await resPut.json();
       if (feedbackComment.trim()) {
-        const resFb = await fetch(`/api/projects/${selectedProj._id}/feedback`, {
+        const resFb = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/projects/${selectedProj._id}/feedback`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

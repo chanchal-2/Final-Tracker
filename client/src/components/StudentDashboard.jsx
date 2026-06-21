@@ -21,37 +21,6 @@ export default function StudentDashboard() {
   const [logs, setLogs] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Mock project data for UI testing (when MongoDB is offline)
-  const mockProject = {
-    _id: 'proj_cse_04',
-    title: 'AI-Powered Capstone Project Tracker',
-    description: 'A full-stack web application for managing final year capstone projects with real-time tracking, guide feedback, and milestone management.',
-    status: 'In Progress',
-    progress: 72,
-    guide: 'Dr. Ananya Rao',
-    department: 'Computer Science',
-    teamMembers: ['Naveen Malviya', 'Priya Patel', 'Rahul Kumar'],
-    milestones: [
-      { title: 'Project Proposal Submission', date: 'Jan 15, 2026', status: 'done' },
-      { title: 'Literature Review', date: 'Feb 10, 2026', status: 'done' },
-      { title: 'System Design Document', date: 'Mar 5, 2026', status: 'done' },
-      { title: 'Prototype Development', date: 'Apr 20, 2026', status: 'active' },
-      { title: 'Testing & QA', date: 'May 30, 2026', status: 'locked' },
-      { title: 'Final Viva & Submission', date: 'Jun 25, 2026', status: 'locked' },
-    ],
-    documents: [
-      { title: 'Project Proposal', type: 'PDF', url: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf', uploadDate: new Date('2026-01-15') },
-      { title: 'System Architecture Diagram', type: 'DOC', url: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf', uploadDate: new Date('2026-03-05') },
-    ],
-    notifications: [
-      { _id: 'n1', title: 'Milestone Due Soon', message: 'Prototype Development is due in 5 days.', isRead: false, type: 'warning' },
-      { _id: 'n2', title: 'Guide Feedback Available', message: 'Dr. Ananya Rao has reviewed your system design document.', isRead: false, type: 'info' },
-    ],
-    feedback: [
-      { _id: 'f1', comment: 'Good progress on the system design. Please add more detail to the API section.', date: new Date('2026-03-10'), guideName: 'Dr. Ananya Rao' }
-    ]
-  };
-
   // Fetch project details and logs
   const fetchData = async () => {
     try {
@@ -66,23 +35,21 @@ export default function StudentDashboard() {
           setProject(proj);
           
           // 2. Get logs for this project
-          const logsRes = await fetch(`/api/logs/${proj._id}`, {
+          const logsRes = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/logs/${proj._id}`, {
             headers: { Authorization: `Bearer ${token}` }
           });
           if (logsRes.ok) {
             const logsData = await logsRes.json();
             setLogs(logsData);
           }
-          return; // Real data loaded, skip mock
+          return;
         }
       }
-      // Fallback to mock data if API fails or returns empty
-      setProject(mockProject);
+      setProject(null);
       setLogs([]);
     } catch (err) {
       console.error('Error fetching student dashboard data:', err);
-      // Fallback to mock data on error
-      setProject(mockProject);
+      setProject(null);
       setLogs([]);
     } finally {
       setLoading(false);
