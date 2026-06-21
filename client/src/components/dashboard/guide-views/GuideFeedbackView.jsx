@@ -8,7 +8,7 @@ export default function GuideFeedbackView({ token }) {
   useEffect(() => {
     const fetchFeedback = async () => {
       try {
-        const res = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/notifications', {
+        const res = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/notifications`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         if (res.ok) {

@@ -170,7 +170,7 @@ export default function GuideManagementView({ token }) {
                   if (!feedbackText.trim()) return alert('Please write some feedback first.');
                   setIsSubmitting(true);
                   try {
-                    await fetch(`${import.meta.env.VITE_API_URL || ''}/api/notifications', {
+                    await fetch(`${import.meta.env.VITE_API_URL || ''}/api/notifications`, {
                       method: 'POST',
                       headers: {
                         'Content-Type': 'application/json',

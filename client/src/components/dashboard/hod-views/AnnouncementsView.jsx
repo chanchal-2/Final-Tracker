@@ -20,7 +20,7 @@ export default function AnnouncementsView({ token }) {
 
   const fetchHistory = async () => {
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/announcements/history', {
+      const res = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/announcements/history`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (res.ok) {
@@ -39,7 +39,7 @@ export default function AnnouncementsView({ token }) {
     setIsSubmitting(true);
     setErrorMsg('');
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/announcements', {
+      const res = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/announcements`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
