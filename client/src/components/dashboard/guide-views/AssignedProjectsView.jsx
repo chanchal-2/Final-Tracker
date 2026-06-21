@@ -26,7 +26,7 @@ export default function AssignedProjectsView({ projects, setProjects, setActiveT
     }
 
     try {
-      await fetch(`/api/projects/${projId}`, {
+      await fetch(`${import.meta.env.VITE_API_URL || ''}/api/projects/${projId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

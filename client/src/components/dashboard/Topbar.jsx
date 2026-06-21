@@ -42,7 +42,7 @@ export default function Topbar({ isCollapsed, setIsCollapsed, activeTab }) {
 
   const markAsRead = async (id) => {
     try {
-      await fetch(`/api/notifications/${id}/read`, {
+      await fetch(`${import.meta.env.VITE_API_URL || ''}/api/notifications/${id}/read`, {
         method: 'PUT',
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -54,7 +54,7 @@ export default function Topbar({ isCollapsed, setIsCollapsed, activeTab }) {
 
   const markAllAsRead = async () => {
     try {
-      await fetch(`/api/notifications/read-all`, {
+      await fetch(`${import.meta.env.VITE_API_URL || ''}/api/notifications/read-all`, {
         method: 'PUT',
         headers: { Authorization: `Bearer ${token}` }
       });

@@ -23,7 +23,7 @@ export default function NotificationsView({ token }) {
 
   const markAsRead = async (id) => {
     try {
-      await fetch(`/api/notifications/${id}/read`, {
+      await fetch(`${import.meta.env.VITE_API_URL || ''}/api/notifications/${id}/read`, {
         method: 'PUT',
         headers: { Authorization: `Bearer ${token}` }
       });

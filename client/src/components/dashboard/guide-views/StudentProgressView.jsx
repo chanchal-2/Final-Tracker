@@ -16,7 +16,7 @@ export default function StudentProgressView({ projects, token }) {
           : [selectedProjId];
 
         for (const pid of projectIdsToFetch) {
-          const res = await fetch(`/api/logs/${pid}`, {
+          const res = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/logs/${pid}`, {
             headers: { Authorization: `Bearer ${token}` }
           });
           if (res.ok) {

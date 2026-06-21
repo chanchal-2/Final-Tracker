@@ -26,7 +26,7 @@ export default function UploadProjectView({ project, setProject, token }) {
       formData.append('type', type);
       formData.append('file', file);
 
-      const res = await fetch(`/api/projects/${project._id}/documents`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/projects/${project._id}/documents`, {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${token}`

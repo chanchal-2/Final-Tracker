@@ -26,7 +26,7 @@ export default function NotificationsView({ projects, token }) {
 
   const markAsRead = async (id) => {
     try {
-      const res = await fetch(`/api/notifications/${id}/read`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/notifications/${id}/read`, {
         method: 'PUT',
         headers: { Authorization: `Bearer ${token}` }
       });
