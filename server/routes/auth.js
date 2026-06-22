@@ -155,7 +155,12 @@ router.post('/login', async (req, res) => {
 
     if (mongoose.connection.readyState === 1) {
       // Find by email or USN
-      const user = await User.findOne({ email: formattedEmail });
+      const user = await User.findOne({
+        $or: [
+          { email: formattedEmail },
+          { uucms: formattedEmail }
+        ]
+      });
 
       if (user && (await user.matchPassword(password))) {
         const allowedStudents = ['u03ai23s0015', 'u03ai23s0017', 'u03ai23s0025', 'u03ai23s0055', 'u03ai23s0013'];
