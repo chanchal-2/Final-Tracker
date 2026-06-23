@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Users, Star, Clock, FileCheck, FileClock, RefreshCw, X, Send, Trash2 } from 'lucide-react';
 
 export default function GuideManagementView({ token }) {
